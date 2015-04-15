@@ -92,16 +92,18 @@
 
   var addTemplate = function(scope, element, attrs) {
     scope.containerEl = element[0];
-    scope.inputEl = document.createElement('input');
-    scope.selectEl = document.createElement('select');
-    scope.inputEl.style.width = '100%';
-    scope.inputEl.style.backgroundColor = '#ddd';
+    var inputEl = document.createElement('input');
+    var selectEl = document.createElement('select');
+    inputEl.style.width = '100%';
+    inputEl.style.backgroundColor = '#ddd';
     if (attrs.defaultStyle!== 'false') {
-      scope.inputEl.style.boxSizing = 'border-box';
-      angular.extend(scope.selectEl.style, defaultStyle);
+      inputEl.style.boxSizing = 'border-box';
+      angular.extend(selectEl.style, defaultStyle);
     }
-    element[0].appendChild(scope.inputEl);
-    element[0].appendChild(scope.selectEl);
+    element[0].appendChild(inputEl);
+    element[0].appendChild(selectEl);
+    scope.inputEl = inputEl;
+    scope.selectEl = selectEl;
   };
 
   var linkFunc = function(scope, element, attrs) {
@@ -109,37 +111,36 @@
     scope.displayProperty = attrs.displayProperty || 'value';
     addTemplate(scope, element, attrs);
 
+    var inputEl = scope.inputEl, selectEl = scope.selectEl;
+    var hideAutoselect = function() {
+      var focusedEl = document.querySelector(':focus');
+      if (focusedEl != inputEl || focusedEl != selectEl) {
+        element[0].style.display = 'none';
+      }
+    };
+
+    inputEl.addEventListener('blur', hideAutoselect);
+    selectEl.addEventListener('blur', hideAutoselect);
+
     /** when input element is newly focused, reload list */
-    scope.inputEl.addEventListener('focus', function() {
-      scope.selectEl.style.display = '';
-      scope.keyword = '';
-      scope.inputEl.value = '';
+    inputEl.addEventListener('focus', function() {
+      selectEl.style.display = '', scope.keyword = '', inputEl.value = '';
       loadList(scope);
     });
 
     /** when enters text to search, reload the list */
-    scope.inputEl.addEventListener('blur', function() {
-      if (!document.hasFocus(scope.selectEl)) {
-        $timeout(function() {
-          scope.selectEl.style.display = 'none';
-          element[0].style.display = 'none';
-        }, 200);
-      }
-    });
-
-    /** when enters text to search, reload the list */
-    scope.inputEl.addEventListener('input', function() {
-      scope.keyword = scope.inputEl.value;
+    inputEl.addEventListener('input', function() {
+      scope.keyword = inputEl.value;
       loadList(scope);
     });
 
     /** when presses down arrow in search box, focus to options */
-    scope.inputEl.addEventListener('keydown', function(evt) {
-      evt.keyCode == 40 && scope.selectEl.focus();
+    inputEl.addEventListener('keydown', function(evt) {
+      evt.keyCode == 40 && selectEl.focus();
     });
 
     /** when presses enter in options, select the element */
-    scope.selectEl.addEventListener('keydown', function(evt) {
+    selectEl.addEventListener('keydown', function(evt) {
       evt.keyCode == 13 && console.log(13);
     });
   };
