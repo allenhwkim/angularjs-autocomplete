@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Input Autocomplete with Static List </title>
+    <script src="spec/lib/angular.js"></script>
+    <script src="ks-auto-complete.js"></script>
+    <script>
+      angular.module('myApp', ['ks']).controller('MyCtrl', function($scope) {
+        $scope.list1 = ['hi','welcome', 'to', 'auto', 'complete']; 
+        $scope.list2 = ['aaaaa','bbbbl', 'cdfdsaf', 'fdsaf', 'fdsaf']; 
+        $scope.list3 = ['foo','bar', 'fooz', 'baz', 'foobaz']; 
+      });
+      // intentionally delay the response for 1 second
+      angular.module('myApp').config(function($httpProvider){
+        $httpProvider.interceptors.push(function($q, $timeout) {
+          return {
+            'response': function(response) {
+              var defer = $q.defer();
+              $timeout(function() {
+                defer.resolve(response);
+              }, 1000);
+              return defer.promise;
+            }
+          };
+        });
+      });
+    </script>
+  </head>
+
+  <body ng-app="myApp" ng-controller="MyCtrl">
+    <h1> Input Autocomplete with Static List</h1>
+    auto complete test <br/>
+    foo: <input ng-model="foo" ks-auto-complete="'list1.json?k=:key'" />
+    <br/>
+    ng-model foo value: {{foo}} <br/>
+    <br/>
+    <br/>
+    <br/>
+    bar: <input ng-model="bar" ks-auto-complete="'list2.json?k=:key'" />
+    <br/>
+    ng-model value: {{bar}} <br/>
+    <br/>
+    <br/>
+    <br/>
+    baz: <input ng-model="baz" ks-auto-complete="'list3.json?k=:key'" />
+    <br/>
+    ng-model value: {{baz}} <br/>
+    <br/>
+    Change your model value here to check two-way bindings <br/>
+    foo: <input ng-model="foo"/> <br/>
+    bar: <input ng-model="bar"/> <br/>
+    baz: <input ng-model="baz"/> <br/>
+  </body>
+</html>

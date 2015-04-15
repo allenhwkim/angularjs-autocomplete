@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Input Autocomplete with Static List </title>
+    <script src="spec/lib/angular.js"></script>
+    <script src="ks-autocomplete.js"></script>
+    <script src="ks-autocomplete-div.js"></script>
+    <script>
+      angular.module('myApp', ['ks']).controller('MyCtrl', function($scope) {
+        $scope.source1 = ['hi','welcome', 'to', 'auto', 'complete']; 
+        $scope.source2 = [{id:1, value:'aaaaa'},{id:2, value:'bbbbl'}, {id:3, value:'cdfdsaf'}, {id:4, value:'fdsaf'}, {id:5, value:'fdsaf'}]; 
+        $scope.source3 = {1:'foo', 2:'bar', 3:'fooz', 4:'baz', 5:'foobaz'}; 
+        $scope.source4 = {1:{text:'foo'}, 2:{text:'bar'}, 3:{text:'fooz'}, 4:{text:'baz'}, 5:{text:'foobaz'}}; 
+        $scope.callback = function(selected) {
+          console.log('within callback function', selected);
+        };
+      });
+    </script>
+  </head>
+
+  <body ng-app="myApp" ng-controller="MyCtrl">
+    source1: <ks-autocomplete-div source="source1" value-changed="callback(value)"></ks-autocomplete-div><br/>
+    source2: <ks-autocomplete-div source="source2" value-changed="callback(value)"></ks-autocomplete-div><br/>
+    source3: <ks-autocomplete-div source="source3" value-changed="callback(value)"></ks-autocomplete-div><br/>
+    source4: <ks-autocomplete-div source="source4" display-property="text" value-changed="callback(value)"></ks-autocomplete-div><br/>
+  </body>
+</html>
+
