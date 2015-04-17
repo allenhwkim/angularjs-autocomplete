@@ -127,7 +127,7 @@
     selectEl.addEventListener('click', selectOption);
   };
 
-  var autocompleteDiv =
+  var autoCompleteDiv =
     function(_$timeout_, _$filter_, _$http_, _$compile_) {
       $timeout = _$timeout_, $filter = _$filter_;
       $http = _$http_, $compile = _$compile_;
@@ -144,5 +144,5 @@
       };
     };
 
-  angular.module('angular-autocomplete').directive('autocompleteDiv', autocompleteDiv);
+  angular.module('angular-autocomplete').directive('autoCompleteDiv', autoCompleteDiv);
 })();

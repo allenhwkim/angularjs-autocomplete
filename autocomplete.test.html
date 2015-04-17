@@ -3,9 +3,8 @@
   <head>
     <title>test</title>
     <script src="lib/angular.js"></script>
-    <script src="directives/angular-autocomplete.js"></script>
-    <script src="directives/autocomplete.js"></script>
-    <script src="directives/autocomplete-div.js"></script>
+    <script src="directives/auto-complete.js"></script>
+    <script src="directives/auto-complete-div.js"></script>
     <script>
       angular.module('myApp', ['angular-autocomplete']).controller('MyCtrl', function($scope) {
         $scope.source1 = ["this", "is", "array", "of", "text"]; 
@@ -22,22 +21,22 @@
   <body ng-app="myApp" ng-controller="MyCtrl">
     source type primitive: {{ source1 }} <br/>
     ng-model foo: {{foo}}
-    <input autocomplete
+    <input auto-complete
       ng-model="foo"
-      autocomplete-source="source1" 
-      autocomplete-value-changed="callback(value)" 
+      ac-source="source1" 
+      ac-value-changed="callback(value)" 
       style="width: 300px; height: 30px;"/>
 
     <br/><br/><br/>
     source type hash: {{ source2 }} <br/>
     ng-model barId:  {{ barId }}
-    <select autocomplete
+    <select auto-complete
       ng-model="barId"
-      autocomplete-selected="bar"
-      autocomplete-source="source2" 
-      autocomplete-value-property="key" 
-      autocomplete-display-property="text" 
-      autocomplete-value-changed="callback(value)" 
+      ac-selected="bar"
+      ac-source="source2" 
+      ac-value-property="key" 
+      ac-display-property="text" 
+      ac-value-changed="callback(value)" 
       ng-options="''+obj.id as obj.value for obj in [bar]" 
       style="width: 300px; height: 30px;">
     <select>

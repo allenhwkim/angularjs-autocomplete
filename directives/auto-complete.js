@@ -2,18 +2,18 @@
   'use strict';
   var $compile;
   var template =
-    '<autocomplete-div style="display:block"></autocomplete-div>';
+    '<auto-complete-div style="display:block"></auto-complete-div>';
 
-  var autocompleteAttrs = [
+  var autoCompleteAttrs = [
     'ng-model', 
-    'autocomplete-source',
-    'autocomplete-selected',
-    'autocomplete-value-changed',
-    'autocomplete-default-style',
-    'autocomplete-value-property',
-    'autocomplete-display-property'];
+    'ac-source',
+    'ac-selected',
+    'ac-value-changed',
+    'ac-default-style',
+    'ac-value-property',
+    'ac-display-property'];
 
-  var styleAutocompleteDiv = function(controlEl, containerEl) {
+  var styleAutoCompleteDiv = function(controlEl, containerEl) {
     var controlBCR = controlEl.getBoundingClientRect();
 
     angular.extend(containerEl.style, {
@@ -32,8 +32,8 @@
     var __template = template, acAttrs="";
 
     /** build autocompleteDiv attributes and compile it */
-    autocompleteAttrs.map(function(attr) {
-      var attrName = attr.replace(/autocomplete-/,'');
+    autoCompleteAttrs.map(function(attr) {
+      var attrName = attr.replace(/ac-/,'');
       var camelCasedAttr = attr.replace(/-([a-z])/g, 
           function(_,$1) {return $1.toUpperCase();}); 
       if (attrs[camelCasedAttr]) {
@@ -41,30 +41,31 @@
       }
     });
     __template = __template.replace('><', acAttrs+'><');
-    var autocompleteDiv = $compile(__template)(scope)[0];
-    autocompleteDiv.style.display = 'none';
+    var autoCompleteDiv = $compile(__template)(scope)[0];
+    autoCompleteDiv.style.display = 'none';
 
-    /** add autocompleteDiv right next to input/select tag */
-    element[0].parentNode.insertBefore(autocompleteDiv,
+    /** add autoCompleteDiv right next to input/select tag */
+    element[0].parentNode.insertBefore(autoCompleteDiv,
       element[0].nextSibling);
 
-    /** let autocompleteDiv can access controlEl. i.e. when select value */
-    autocompleteDiv.controlEl = element[0];
+    /** let autoCompleteDiv can access controlEl. i.e. when select value */
+    autoCompleteDiv.controlEl = element[0];
 
-    /** when clicked, show autocomplete and focus to input box */
+    /** when clicked, show autoComplete and focus to input box */
     element[0].addEventListener('click', function() {
-      styleAutocompleteDiv(element[0], autocompleteDiv);
-      autocompleteDiv.firstChild.focus();
+      styleAutoCompleteDiv(element[0], autoCompleteDiv);
+      autoCompleteDiv.firstChild.focus();
     });
 
   };
 
-  var autocomplete = function(_$compile_) {
+  var autoComplete = function(_$compile_) {
     $compile = _$compile_;
     return {
       link: linkFunc 
     };
   };
 
-  angular.module('angular-autocomplete').directive('autocomplete', autocomplete);
+  angular.module('angular-autocomplete',[]);
+  angular.module('angular-autocomplete').directive('autoComplete', autoComplete);
 })();
