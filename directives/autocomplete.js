@@ -7,6 +7,7 @@
   var autocompleteAttrs = [
     'ng-model', 
     'autocomplete-source',
+    'autocomplete-selected',
     'autocomplete-value-changed',
     'autocomplete-default-style',
     'autocomplete-value-property',
@@ -29,13 +30,6 @@
 
   var linkFunc = function(scope, element, attrs) {
     var __template = template, acAttrs="";
-
-    /** when selelected, set SELECT tag display text */
-    element[0].setOptions = function(selected) {
-      if (element[0].tagName.toLowerCase() == "select") {
-        element[0].firstChild.innerHTML = selected.text;
-      }
-    };
 
     /** build autocompleteDiv attributes and compile it */
     autocompleteAttrs.map(function(attr) {

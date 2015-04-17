@@ -3,18 +3,9 @@
   var $timeout, $filter, $http, $compile;
 
   var defaultStyle = {
-    display:'none', width: '100%', 'overflow-y': 'auto'
+    display:'none', width: '100%', 'overflow-y': 'hidden'
   };
-
-  var getSourceType = function(source) {
-    if (Array.isArray(source) && source[0]) {           // for array source
-      return source[0].constructor !== Object ? 1 : 2;  //   1: primitive elements 2: hash elements
-    } else if (source.constructor === Object) {         // for hash source
-      var firstKey = Object.keys(source)[0];            //   3: primitive value, 4: hash value
-      return (typeof source[firstKey] === 'string') ? 3 : 4;
-    }
-  };
-
+  
   var showLoading = function(selectEl, show) {
     if (!show) {
       selectEl.innerHTML = '<option class="loading"> Loading </option>'; 
@@ -24,57 +15,31 @@
   };
 
   var addListElements = function(scope, data) {
+// .............. data .................
     var inputEl = scope.inputEl, selectEl = scope.selectEl;
-    var sourceType = getSourceType(data);
-    var key, displayText, filteredData;
-    //
-    //TODO: build a function 'getKeysTexts' 
-    //  returns array of {key: 0(or hash key), displayText: displayText} 
-    //
-    //  then use 'key's to filter to build filteredData
-    //
+    var key, displayText, filteredData = data;
     if (typeof scope.source !== 'string') { // no filter for url source
-      filteredData = $filter('filter')(data, scope.keyword);
-      console.log('filteredData', filteredData);
+      filteredData = $filter('filter')(data, scope.inputEl.value);
     }
-    var select = function(key, displayText, obj) {
-      return function() { 
-        scope.selected = { value: key, text: displayText };
-        (obj.constructor == Object) && (scope.selected.object = obj);
-        scope.containerEl.controlEl.setOptions(scope.selected);
-        scope.valueChanged({value: scope.selected}); //user scope
-        //inputEl.value = scope.selected.value;
-        scope.ngModel = scope.selected.value;
-        scope.$apply();
-      };
-    };
     while(selectEl.firstChild) { 
       selectEl.removeChild(selectEl.firstChild);
     }
-    selectEl.setAttribute("size",
-      filteredData.length || Object.keys(filteredData).length);
-    for (var id in filteredData) {
-      var el = filteredData[id];
-      if (sourceType == 1) {
-        key = el, displayText=el;
-      } else if (sourceType == 2) {
+    selectEl.setAttribute("size", filteredData.length);
+    filteredData.forEach(function(el) {
+      var key=el, displayText=el;
+      var optionEl = document.createElement('option');
+      if (typeof el == 'object') {
         key = el[scope.valueProperty];
         displayText = el[scope.displayProperty];
-      } else if (sourceType == 3) {
-        key = id, displayText = el;
-      } else if (sourceType == 4) {
-        key = el[scope.valueProperty] || id;
-        displayText = el[scope.displayProperty];
-      }
-      var optionEl = document.createElement('option');
+        optionEl.object = el;
+      } 
       optionEl.setAttribute('value', key);
       optionEl.innerHTML = displayText;
-      optionEl.addEventListener('click', select(key, displayText, el));
       selectEl.appendChild(optionEl);
-    }
+    });
   };
 
-  var loadList = function(scope, keyword) {
+  var loadList = function(scope) {
     var inputEl = scope.inputEl, selectEl = scope.selectEl;
     if (typeof scope.source == 'string') {     // url
        var url= scope.source.replace(/:[a-z]+/i, inputEl.value); 
@@ -113,9 +78,28 @@
 
     var inputEl = scope.inputEl, selectEl = scope.selectEl;
     var hideAutoselect = function() {
-      var focusedEl = document.querySelector(':focus');
-      if (focusedEl != inputEl || focusedEl != selectEl) {
-        element[0].style.display = 'none';
+      $timeout(function() {
+        var focusedEl = document.querySelector(':focus');
+        if (focusedEl != inputEl && focusedEl != selectEl) {
+          element[0].style.display = 'none';
+        } 
+      }, 100);
+    };
+
+    /** listener of keydown, esc/enter, and click */
+    var selectOption = function(evt) {
+      var optionEl;
+      (evt.keyCode == 27) && (evt.target.style.display = 'none'); // esc
+      (evt instanceof MouseEvent)  && (optionEl = evt.target); // click
+      (evt.keyCode == 13) && (optionEl = evt.target.children[evt.target.selectedIndex]); //enter
+      if (optionEl) {
+        console.log('selected optionEl', optionEl);
+        var selected = optionEl.object || optionEl.value;
+        scope.valueChanged({value: selected}); //user scope
+        scope.ngModel = optionEl.value;
+        attrs.selected && (scope.selected = selected);
+        scope.$apply();
+        scope.containerEl.style.display='none';
       }
     };
 
@@ -124,13 +108,12 @@
 
     /** when input element is newly focused, reload list */
     inputEl.addEventListener('focus', function() {
-      selectEl.style.display = '', scope.keyword = '', inputEl.value = '';
+      selectEl.style.display = '', inputEl.value = '';
       loadList(scope);
     });
 
     /** when enters text to search, reload the list */
     inputEl.addEventListener('input', function() {
-      scope.keyword = inputEl.value;
       loadList(scope);
     });
 
@@ -140,23 +123,21 @@
     });
 
     /** when presses enter in options, select the element */
-    selectEl.addEventListener('keydown', function(evt) {
-      evt.keyCode == 13 && console.log(13);
-    });
+    selectEl.addEventListener('keydown', selectOption);
+    selectEl.addEventListener('click', selectOption);
   };
 
   var autocompleteDiv =
     function(_$timeout_, _$filter_, _$http_, _$compile_) {
-      $timeout = _$timeout_;
-      $filter = _$filter_;
-      $http = _$http_;
-      $compile = _$compile_;
+      $timeout = _$timeout_, $filter = _$filter_;
+      $http = _$http_, $compile = _$compile_;
 
       return {
         restrict: 'E',
         scope: {
           ngModel : '=', 
           source : '=', 
+          selected : '=', 
           valueChanged : '&'
         },  //+valueProperty, +displayProperty
         link: linkFunc 

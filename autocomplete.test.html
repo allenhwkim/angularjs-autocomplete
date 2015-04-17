@@ -9,9 +9,9 @@
     <script>
       angular.module('myApp', ['angular-autocomplete']).controller('MyCtrl', function($scope) {
         $scope.source1 = ["this", "is", "array", "of", "text"]; 
-        $scope.source2 = {1: "you", 2:"can", 3:"also", 4:"use", 5:"hash", 6:"for", 7:"options"}
+        $scope.source2 = [{key:1, text:'One'}, {key:2, text:'Two'}, {key:3, text:'Three'}, {key:4, text:'Four'}];
         $scope.callback = function(arg) {
-          console.log('arg', arg);
+          console.log('value selected by autocomplete: ', arg);
         };
         $scope.foo_id = 1;
         $scope.foo_name = "you";
@@ -20,24 +20,28 @@
   </head>
 
   <body ng-app="myApp" ng-controller="MyCtrl">
-    source 1: {{ source1 }} <br/>
+    source type primitive: {{ source1 }} <br/>
     ng-model foo: {{foo}}
     <input autocomplete
       ng-model="foo"
       autocomplete-source="source1" 
       autocomplete-value-changed="callback(value)" 
-      autocomplete-display-property="text" 
       style="width: 300px; height: 30px;"/>
 
     <br/><br/><br/>
-    source 2: {{ source2 }} <br/>
-    ng-model bar:  {{bar}}
+    source type hash: {{ source2 }} <br/>
+    ng-model barId:  {{ barId }}
     <select autocomplete
-      ng-model="bar"
+      ng-model="barId"
+      autocomplete-selected="bar"
       autocomplete-source="source2" 
+      autocomplete-value-property="key" 
+      autocomplete-display-property="text" 
       autocomplete-value-changed="callback(value)" 
-      style="width: 300px; height: 30px; -webkit-box-sizing:content-box; box-sizing:content-box; -webkit-appearance: menulist-button;">
+      ng-options="''+obj.id as obj.value for obj in [bar]" 
+      style="width: 300px; height: 30px;">
     <select>
+    <br/>ng-model bar:  {{ bar }}
+
   </body>
 </html>
-
