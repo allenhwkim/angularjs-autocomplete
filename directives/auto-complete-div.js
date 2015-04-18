@@ -2,10 +2,6 @@
   'use strict';
   var $timeout, $filter, $http, $compile;
 
-  var defaultStyle = {
-    display:'none', width: '100%', 'overflow-y': 'hidden'
-  };
-  
   var showLoading = function(selectEl, show) {
     if (!show) {
       selectEl.innerHTML = '<option class="loading"> Loading </option>'; 
@@ -15,7 +11,6 @@
   };
 
   var addListElements = function(scope, data) {
-// .............. data .................
     var inputEl = scope.inputEl, selectEl = scope.selectEl;
     var key, displayText, filteredData = data;
     if (typeof scope.source !== 'string') { // no filter for url source
@@ -55,24 +50,10 @@
     }
   };
 
-  var addTemplate = function(scope, element, attrs) {
-    scope.containerEl = element[0];
-    var inputEl = document.createElement('input');
-    var selectEl = document.createElement('select');
-    inputEl.style.width = '100%';
-    inputEl.style.backgroundColor = '#ddd';
-    if (attrs.defaultStyle!== 'false') {
-      inputEl.style.boxSizing = 'border-box';
-      angular.extend(selectEl.style, defaultStyle);
-    }
-    element[0].appendChild(inputEl);
-    element[0].appendChild(selectEl);
-    scope.inputEl = inputEl;
-    scope.selectEl = selectEl;
-  };
-
   var linkFunc = function(scope, element, attrs) {
-    addTemplate(scope, element, attrs);
+    scope.containerEl = element[0];
+    scope.inputEl = element[0].querySelector('input');
+    scope.selectEl =  element[0].querySelector('select');
 
     var inputEl = scope.inputEl, selectEl = scope.selectEl;
     var hideAutoselect = function() {
@@ -117,6 +98,7 @@
 
     /** when presses down arrow in search box, focus to options */
     inputEl.addEventListener('keydown', function(evt) {
+      evt.keyCode == 27 && (element[0].style.display = 'none');
       evt.keyCode == 40 && selectEl.focus();
     });
 
