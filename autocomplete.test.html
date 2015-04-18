@@ -23,22 +23,28 @@
     ng-model foo: {{foo}}
     <input auto-complete
       ng-model="foo"
-      ac-source="source1" 
-      ac-value-changed="callback(value)" 
+      source="source1" 
+      value-changed="callback(value)" 
       style="width: 300px; height: 30px;"/>
+
+    <br/>
+    <br/>
+    <br/>
+    Disabled Input: 
+    <input auto-complete ng-disabled="true" ng-model="foo"
+      source="source1" style="width: 300px; height: 30px; background-color: #ddd"/>
 
     <br/><br/><br/>
     source type hash: {{ source2 }} <br/>
     ng-model barId:  {{ barId }}
     <select auto-complete
       ng-model="barId"
-      ac-selected="bar"
-      ac-source="source2" 
-      ac-value-property="key" 
-      ac-display-property="text" 
-      ac-value-changed="callback(value)" 
-      ng-options="''+obj.id as obj.value for obj in [bar]" 
-      style="width: 300px; height: 30px;">
+      select-to="bar"
+      source="source2" 
+      value-property="key" 
+      display-property="text" 
+      value-changed="callback(value)" 
+      style="width: 300px; height: 30px; -webkit-appearance: menulist-button;">
     <select>
     <br/>ng-model bar:  {{ bar }}
 

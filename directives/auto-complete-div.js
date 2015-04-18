@@ -97,7 +97,7 @@
         var selected = optionEl.object || optionEl.value;
         scope.valueChanged({value: selected}); //user scope
         scope.ngModel = optionEl.value;
-        attrs.selected && (scope.selected = selected);
+        attrs.selectTo && (scope.selectTo = selected);
         scope.$apply();
         scope.containerEl.style.display='none';
       }
@@ -137,7 +137,7 @@
         scope: {
           ngModel : '=', 
           source : '=', 
-          selected : '=', 
+          selectTo : '=', 
           valueChanged : '&'
         },  //+valueProperty, +displayProperty
         link: linkFunc 
