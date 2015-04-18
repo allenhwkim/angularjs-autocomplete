@@ -72,8 +72,6 @@
   };
 
   var linkFunc = function(scope, element, attrs) {
-    scope.valueProperty = attrs.valueProperty || 'id';
-    scope.displayProperty = attrs.displayProperty || 'value';
     addTemplate(scope, element, attrs);
 
     var inputEl = scope.inputEl, selectEl = scope.selectEl;
@@ -96,7 +94,7 @@
         console.log('selected optionEl', optionEl);
         var selected = optionEl.object || optionEl.value;
         scope.valueChanged({value: selected}); //user scope
-        scope.ngModel = optionEl.value;
+        attrs.ngModel && (scope.ngModel = optionEl.value);
         attrs.selectTo && (scope.selectTo = selected);
         scope.$apply();
         scope.containerEl.style.display='none';
@@ -138,8 +136,10 @@
           ngModel : '=', 
           source : '=', 
           selectTo : '=', 
+          valueProperty: '@',
+          displayProperty: '@',
           valueChanged : '&'
-        },  //+valueProperty, +displayProperty
+        },
         link: linkFunc 
       };
     };

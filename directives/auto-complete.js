@@ -1,8 +1,5 @@
 (function(){
   'use strict';
-  var $compile;
-  var template =
-    '<auto-complete-div style="display:block"></auto-complete-div>';
 
   var autoCompleteAttrs = [
     'ngModel', 'source', 'selectTo', 'valueChanged',
@@ -32,52 +29,42 @@
   };
 
   var compileFunc = function(tElement, tAttrs)  {
+    var acDiv;
+
     if (tElement[0].tagName == "SELECT") {
       if (!tAttrs.selectTo) {
         tAttrs.selectTo = 'obj'+Math.floor(Math.random()*100);
       }
       if (!tAttrs.ngOptions) {
-        var valueProp = tAttrs.valueProperty || 'id';
-        var displayProp = tAttrs.displayProperty || 'value';
+        tAttrs.valueProperty = tAttrs.valueProperty || 'id';
+        tAttrs.displayProperty = tAttrs.displayProperty || 'value';
         tAttrs.ngOptions = 
-          "''+obj['"+valueProp+"'] as " +
-          "obj['"+displayProp+"'] for " + 
+          "''+obj['"+tAttrs.valueProperty+"'] as " +
+          "obj['"+tAttrs.displayProperty+"'] for " + 
           "obj in ["+tAttrs.selectTo+"]";
       }
     }
 
-    return {
-      pre: function() {},
-      post:  function(scope, element, attrs) {
-        var __template = template, acDivAttrs="";
+    acDiv = document.createElement('auto-complete-div');
+    acDiv.style.display = 'none';
+    autoCompleteAttrs.map(function(attr) {
+      if (tAttrs[attr]) {
+        acDiv.setAttribute(dasherize(attr), tAttrs[attr]);
+      }
+    });
 
-        /** build autoCompleteDiv attributes and compile it */
-        autoCompleteAttrs.map(function(attr) {
-          if (attrs[attr]) {
-            acDivAttrs += ' '+dasherize(attr)+'="'+attrs[attr]+'"';
-          }
-        });
-        __template = __template.replace('><', acDivAttrs+'><');
-        var autoCompleteDiv = $compile(__template)(scope)[0];
-        autoCompleteDiv.style.display = 'none';
+    /** add autoCompleteDiv right next to input/select tag */
+    tElement[0].parentNode.insertBefore(acDiv, tElement[0].nextSibling);
 
-        /** add autoCompleteDiv right next to input/select tag */
-        element[0].parentNode.insertBefore(autoCompleteDiv,
-          element[0].nextSibling);
-
-        /** when clicked, show autoComplete and focus to input box */
-        element[0].addEventListener('click', function() {
-          if (!element[0].disabled) {
-            styleAutoCompleteDiv(element[0], autoCompleteDiv);
-            autoCompleteDiv.firstChild.focus();
-          }
-        });
-      } // post
-    };
+    tElement[0].addEventListener('click', function() {
+      if (!tElement[0].disabled) {
+        styleAutoCompleteDiv(tElement[0], acDiv);
+        acDiv.firstChild.focus();
+      }
+    });
   }; // compileFunc
 
-  var autoComplete = function(_$compile_) {
-    $compile = _$compile_;
+  var autoComplete = function() {
     return {
       compile: compileFunc 
     };

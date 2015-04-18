@@ -8,14 +8,17 @@
     <script>
       angular.module('myApp', ['angular-autocomplete']).controller('MyCtrl', function($scope) {
         $scope.source1 = ["this", "is", "array", "of", "text"]; 
-        $scope.source2 = [{key:1, text:'One'}, {key:2, text:'Two'}, {key:3, text:'Three'}, {key:4, text:'Four'}];
+        $scope.source2 = [{id:1, value:'One'}, {id:2, value:'Two'}, {id:3, value:'Three'}, {id:4, value:'Four'}];
+        $scope.source3 = [{key:1, text:'One'}, {key:2, text:'Two'}, {key:3, text:'Three'}, {key:4, text:'Four'}];
         $scope.callback = function(arg) {
           console.log('value selected by autocomplete: ', arg);
         };
-        $scope.foo_id = 1;
-        $scope.foo_name = "you";
       });
     </script>
+    <style>
+      input[auto-complete] {width: 300px; height: 30px}
+      select[auto-complete] {width: 300px; height: 30px; -webkit-appearance: menulist-button;}
+    </style>
   </head>
 
   <body ng-app="myApp" ng-controller="MyCtrl">
@@ -24,8 +27,7 @@
     <input auto-complete
       ng-model="foo"
       source="source1" 
-      value-changed="callback(value)" 
-      style="width: 300px; height: 30px;"/>
+      value-changed="callback(value)"/>
 
     <br/>
     <br/>
@@ -36,16 +38,21 @@
 
     <br/><br/><br/>
     source type hash: {{ source2 }} <br/>
-    ng-model barId:  {{ barId }}
+    ng-model barId1:  {{ barId1 }}
     <select auto-complete
-      ng-model="barId"
+      ng-model="barId1"
+      source="source2"></select>
+
+    <br/><br/><br/>
+    source type hash: {{ source3 }} <br/>
+    ng-model barId2:  {{ barId2 }}
+    <select auto-complete
+      ng-model="barId2"
       select-to="bar"
-      source="source2" 
+      source="source3" 
       value-property="key" 
       display-property="text" 
-      value-changed="callback(value)" 
-      style="width: 300px; height: 30px; -webkit-appearance: menulist-button;">
-    <select>
+      value-changed="callback(value)"></select>
     <br/>ng-model bar:  {{ bar }}
 
   </body>
