@@ -12,7 +12,7 @@
 
   var addListElements = function(scope, data) {
     var inputEl = scope.inputEl, selectEl = scope.selectEl;
-    var key, displayText, filteredData = data;
+    var displayText, filteredData = data;
     if (typeof scope.source !== 'string') { // no filter for url source
       filteredData = $filter('filter')(data, scope.inputEl.value);
     }
@@ -20,16 +20,13 @@
       selectEl.removeChild(selectEl.firstChild);
     }
     selectEl.setAttribute("size", filteredData.length);
+    console.log('scope.displayProperty', scope.displayProperty);
     filteredData.forEach(function(el) {
-      var key=el, displayText=el;
       var optionEl = document.createElement('option');
-      if (typeof el == 'object') {
-        key = el[scope.valueProperty];
-        displayText = el[scope.displayProperty];
-        optionEl.object = el;
-      } 
-      optionEl.setAttribute('value', key);
+      var displayText = typeof el == 'object' ?
+        el[scope.displayProperty] : el;
       optionEl.innerHTML = displayText;
+      optionEl.object = el;
       selectEl.appendChild(optionEl);
     });
   };
@@ -54,6 +51,7 @@
     scope.containerEl = element[0];
     scope.inputEl = element[0].querySelector('input');
     scope.selectEl =  element[0].querySelector('select');
+    scope.controlEl = element[0].controlEl;
 
     var inputEl = scope.inputEl, selectEl = scope.selectEl;
     var hideAutoselect = function() {
@@ -65,18 +63,19 @@
       }, 100);
     };
 
-    /** listener of keydown, esc/enter, and click */
-    var selectOption = function(evt) {
-      var optionEl;
+    /** listener of keydown, esc/enter, and click of OPTION */
+    var select = function(evt) {
+      var optionEl, modelValue;
       (evt.keyCode == 27) && (evt.target.style.display = 'none'); // esc
       (evt instanceof MouseEvent)  && (optionEl = evt.target); // click
       (evt.keyCode == 13) && (optionEl = evt.target.children[evt.target.selectedIndex]); //enter
       if (optionEl) {
-        console.log('selected optionEl', optionEl);
-        var selected = optionEl.object || optionEl.value;
-        scope.valueChanged({value: selected}); //user scope
-        attrs.ngModel && (scope.ngModel = optionEl.value);
-        attrs.selectTo && (scope.selectTo = selected);
+        modelValue = optionEl.object;
+        if (scope.controlEl.tagName == 'INPUT') {
+          modelValue = optionEl.innerHTML;
+        } 
+        attrs.ngModel && (scope.ngModel = modelValue);
+        scope.valueChanged({value: optionEl.object}); //user scope
         scope.$apply();
         scope.containerEl.style.display='none';
       }
@@ -103,8 +102,8 @@
     });
 
     /** when presses enter in options, select the element */
-    selectEl.addEventListener('keydown', selectOption);
-    selectEl.addEventListener('click', selectOption);
+    selectEl.addEventListener('keydown', select);
+    selectEl.addEventListener('click', select);
   };
 
   var autoCompleteDiv =
@@ -117,7 +116,6 @@
         scope: {
           ngModel : '=', 
           source : '=', 
-          selectTo : '=', 
           valueProperty: '@',
           displayProperty: '@',
           valueChanged : '&'

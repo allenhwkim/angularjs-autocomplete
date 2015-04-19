@@ -2,7 +2,7 @@
   'use strict';
 
   var autoCompleteAttrs = [
-    'ngModel', 'source', 'selectTo', 'valueChanged',
+    'ngModel', 'source', 'valueChanged',
     'defaultStyle', 'valueProperty', 'displayProperty'
   ];
 
@@ -34,6 +34,9 @@
   var buildACDiv = function(controlEl, containerEl) {
     var controlBCR = controlEl.getBoundingClientRect();
 
+    containerEl.style.display = 'none';
+    containerEl.controlEl = controlEl;
+
     var inputEl = document.createElement('input');
     containerEl.appendChild(inputEl);
     inputEl.style.height = (controlBCR.height - 6) + 'px';
@@ -62,24 +65,21 @@
 
   var compileFunc = function(tElement, tAttrs)  {
 
+    tAttrs.valueProperty = tAttrs.valueProperty || 'id';
+    tAttrs.displayProperty = tAttrs.displayProperty || 'value';
+
     // 1. add more attributes for <select> tag
     if (tElement[0].tagName == "SELECT") {
-      if (!tAttrs.selectTo) {
-        tAttrs.selectTo = 'obj'+Math.floor(Math.random()*100);
-      }
-      if (!tAttrs.ngOptions) {
-        tAttrs.valueProperty = tAttrs.valueProperty || 'id';
-        tAttrs.displayProperty = tAttrs.displayProperty || 'value';
+      if (tAttrs.ngModel && !tAttrs.ngOptions) {
         tAttrs.ngOptions = 
-          "''+obj['"+tAttrs.valueProperty+"'] as " +
-          "obj['"+tAttrs.displayProperty+"'] for " + 
-          "obj in ["+tAttrs.selectTo+"]";
+          "obj as " +
+          "(obj['"+tAttrs.displayProperty+"'] || obj) for " + 
+          "obj in ["+tAttrs.ngModel+"]";
       }
     }
 
     // 2. build <auto-complete-div>
     var acDiv = document.createElement('auto-complete-div');
-    acDiv.style.display = 'none';
     buildACDiv(tElement[0], acDiv);
     autoCompleteAttrs.map(function(attr) {
       if (tAttrs[attr]) {

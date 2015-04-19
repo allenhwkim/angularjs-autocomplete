@@ -13,6 +13,10 @@
         $scope.callback = function(arg) {
           console.log('value selected by autocomplete: ', arg);
         };
+      }).directive('printSource', function(){
+        return function(scope, element, attrs) {
+          element[0].innerHTML = '<pre>'+document.querySelector(attrs.printSource).outerHTML.replace(/</g, '&lt;')+'</pre>';
+        };
       });
     </script>
     <style>
@@ -22,40 +26,63 @@
   </head>
 
   <body ng-app="myApp" ng-controller="MyCtrl">
-    source type primitive: {{ source1 }} <br/>
-    ng-model foo: {{foo}}
-    <input auto-complete
-      ng-model="foo"
-      source="source1" 
-      value-changed="callback(value)"/>
+    
+    <div>
+      <h3>INPUT / primitive array:</h3>
+      <br/>ng-model foo1: <b>{{foo1}}</b> 
+      <br/>source: {{source1}} <br/>
+      <div print-source='#ip'></div>
+      <input id='ip' auto-complete ng-model="foo1" source="source1" 
+        value-changed="callback(value)"/>
+    </div>
 
-    <br/>
-    <br/>
-    <br/>
-    Disabled Input: 
-    <input auto-complete ng-disabled="true" ng-model="foo"
-      source="source1" style="width: 300px; height: 30px; background-color: #ddd"/>
+    <div>
+      <h3>INPUT / hash array:</h3>
+      <br/>ng-model foo2: <b>{{foo2}}</b> 
+      <br/>source: {{ source2 }} <br/>
+      <div print-source='#ih'></div>
+      <input id='ih' auto-complete ng-model="foo2" source="source2" 
+        value-changed="callback(value)"/>
+    </div>
 
-    <br/><br/><br/>
-    source type hash: {{ source2 }} <br/>
-    ng-model barId1:  {{ barId1 }}
-    <select auto-complete
-      ng-model="barId1"
-      source="source2"></select>
+    <div>
+      <h3>SELECT / primitive array:</h3>
+      <br/>ng-model foo3:  <b>{{ foo3 }}</b>
+      <br/>source: {{ source1 }} <br/>
+      <div print-source='#sp'></div>
+      <select id='sp' auto-complete ng-model="foo3" source="source1"
+        value-changed="callback(value)"></select>
+    </div>
 
-    <br/><br/><br/>
-    source type hash: {{ source3 }} <br/>
-    ng-model barId2:  {{ barId2 }}
-    <select auto-complete
-      ng-model="barId2"
-      select-to="bar"
-      source="source3" 
-      value-property="key" 
-      display-property="text" 
-      value-changed="callback(value)"></select>
-    <br/>ng-model bar:  {{ bar }}
+    <div>
+      <h3>SELECT / hash(id/value):</h3>
+      <br/>ng-model foo4:  <b>{{ foo4 }}</b> 
+      <br/>source: {{ source2 }} <br/>
+      <div print-source='#sh'></div>
+      <select id='sh' auto-complete ng-model="foo4" source="source2"
+        value-changed="callback(value)"></select>
+    </div>
 
-    <input size="1" onkeydown="this.setAttribute('size', this.value.length+1)">
+    <div>
+      <h3>SELECT / hash(custom/custom):</h3>
+      <br/>ng-model foo5: <b>{{ foo5 }}</b>
+      <br/>source: {{ source3 }} <br/>
+      <div print-source='#sh2'></div>
+      <select id='sh2' auto-complete
+        ng-model="foo5"
+        source="source3" 
+        value-property="key" 
+        display-property="text" 
+        value-changed="callback(value)"></select>
+    </div>
+
+    <div>
+      <h3>INPUT[ng-disabled]</h3>
+      <div print-source='#id'></div>
+      <input id='id' auto-complete ng-model="foo1" source="source1" 
+        ng-disabled="true"
+        value-changed="callback(value)"/>
+    </div>
 
   </body>
 </html>
