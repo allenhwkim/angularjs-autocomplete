@@ -1,2 +1,34 @@
-# angular-autocomplete
 AngularJS Autocomplete
+======================
+single or multi autocomplete by static or remote source for INPUT and SELECT tag
+
+Features
+--------
+
+  * We can simple just set autocomplete feature to INPUT and SELECT tag
+  * It does not require more tags such as ui-select-match, ui-select-choices
+  * It treat SELECT tag autocomplete as different from tagging
+
+Examples
+--------
+
+  * https://rawgit.com/allenhwkim/angular-autocomplete/master/autocomplete.test.html
+  * https://rawgit.com/allenhwkim/angular-autocomplete/master/autocomplete.multi.html
+  * https://rawgit.com/allenhwkim/angular-autocomplete/master/autocomplete.multi.custom.html
+
+Attributes
+--------
+
+  * ng-model
+  * source
+  * value-Changed
+  * default-style 
+  * value-property
+  * display-property
+
+TODO:
+--------
+
+  * need to test with remote source
+  * need to accept soruce as $promise
+
