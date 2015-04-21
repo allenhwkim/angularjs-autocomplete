@@ -1,6 +1,6 @@
 (function(){
   'use strict';
-  var $timeout, $filter, $http, $compile;
+  var $timeout, $filter, $http, $compile, AutoComplete;
 
   var showLoading = function(selectEl, show) {
     if (!show) {
@@ -20,7 +20,6 @@
       selectEl.removeChild(selectEl.firstChild);
     }
     selectEl.setAttribute("size", filteredData.length);
-    console.log('scope.displayProperty', scope.displayProperty);
     filteredData.forEach(function(el) {
       var optionEl = document.createElement('option');
       var displayText = typeof el == 'object' ?
@@ -48,36 +47,63 @@
   };
 
   var linkFunc = function(scope, element, attrs) {
-    scope.containerEl = element[0];
+    var containerEl = element[0];
+    var controlEl = element[0].controlEl;
+    var isMultiple = containerEl.hasAttribute('multiple');
     scope.inputEl = element[0].querySelector('input');
     scope.selectEl =  element[0].querySelector('select');
-    scope.controlEl = element[0].controlEl;
+
+    // add default class css to head tag
+    if (scope.defaultStyle !== false) {
+      console.log('scope.defaultStyle', scope.defaultStyle);
+      containerEl.className += ' default-style';
+      AutoComplete.injectDefaultStyle();
+    }
 
     var inputEl = scope.inputEl, selectEl = scope.selectEl;
     var hideAutoselect = function() {
       $timeout(function() {
         var focusedEl = document.querySelector(':focus');
         if (focusedEl != inputEl && focusedEl != selectEl) {
-          element[0].style.display = 'none';
+          var elToHide = isMultiple ? selectEl : containerEl;
+          elToHide.style.display = 'none';
         } 
       }, 100);
     };
 
+    var focusInputEl = function(evt) {
+      selectEl.style.display = 'inline-block'; 
+      inputEl.focus();
+      inputEl.value = '';
+      loadList(scope);
+    };
+    if (isMultiple) {
+      inputEl.parentNode.parentNode.addEventListener('click', focusInputEl, true);
+    }
+
     /** listener of keydown, esc/enter, and click of OPTION */
     var select = function(evt) {
-      var optionEl, modelValue;
+      var optionEl;
       (evt.keyCode == 27) && (evt.target.style.display = 'none'); // esc
       (evt instanceof MouseEvent)  && (optionEl = evt.target); // click
       (evt.keyCode == 13) && (optionEl = evt.target.children[evt.target.selectedIndex]); //enter
       if (optionEl) {
-        modelValue = optionEl.object;
-        if (scope.controlEl.tagName == 'INPUT') {
-          modelValue = optionEl.innerHTML;
-        } 
-        attrs.ngModel && (scope.ngModel = modelValue);
+        optionEl.tagName == "SELECT" && (optionEl = optionEl.firstChild);
+        var elToHide = isMultiple ? selectEl : containerEl;
+        elToHide.style.display = 'none';
+
+        if (attrs.ngModel) {
+          if (controlEl && controlEl.tagName == 'INPUT') {
+            scope.ngModel = optionEl.innerHTML ;
+          } else if (isMultiple) {
+            scope.ngModel.push(optionEl.object);
+          } else {
+            scope.ngModel = optionEl.object;
+          }
+        }
+
         scope.valueChanged({value: optionEl.object}); //user scope
         scope.$apply();
-        scope.containerEl.style.display='none';
       }
     };
 
@@ -85,10 +111,7 @@
     selectEl.addEventListener('blur', hideAutoselect);
 
     /** when input element is newly focused, reload list */
-    inputEl.addEventListener('focus', function() {
-      selectEl.style.display = '', inputEl.value = '';
-      loadList(scope);
-    });
+    inputEl.addEventListener('focus', focusInputEl );
 
     /** when enters text to search, reload the list */
     inputEl.addEventListener('input', function() {
@@ -97,8 +120,14 @@
 
     /** when presses down arrow in search box, focus to options */
     inputEl.addEventListener('keydown', function(evt) {
-      evt.keyCode == 27 && (element[0].style.display = 'none');
+      evt.keyCode == 27 && hideAutoselect();
       evt.keyCode == 40 && selectEl.focus();
+      if (evt.keyCode == 13 && selectEl.style.display !== 'none' ) {  
+        selectEl.firstChild.dispatchEvent(
+          new MouseEvent('click', {bubbles:true, view: window})
+        );
+        focusInputEl(); 
+      }
     });
 
     /** when presses enter in options, select the element */
@@ -107,15 +136,19 @@
   };
 
   var autoCompleteDiv =
-    function(_$timeout_, _$filter_, _$http_, _$compile_) {
-      $timeout = _$timeout_, $filter = _$filter_;
-      $http = _$http_, $compile = _$compile_;
+    function(_$timeout_, _$filter_, _$http_, _$compile_, _AutoComplete_) {
+      $timeout = _$timeout_;
+      $filter = _$filter_;
+      $http = _$http_; 
+      $compile = _$compile_;
+      AutoComplete = _AutoComplete_;
 
       return {
         restrict: 'E',
         scope: {
           ngModel : '=', 
           source : '=', 
+          defaultStyle : '=', 
           valueProperty: '@',
           displayProperty: '@',
           valueChanged : '&'
@@ -124,5 +157,6 @@
       };
     };
 
-  angular.module('angular-autocomplete').directive('autoCompleteDiv', autoCompleteDiv);
+  angular.module('angular-autocomplete').
+    directive('autoCompleteDiv', autoCompleteDiv);
 })();

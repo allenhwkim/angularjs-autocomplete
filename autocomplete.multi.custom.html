@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>test</title>
+    <script src="lib/angular.js"></script>
+    <script src="directives/auto-complete.js"></script>
+    <script src="directives/auto-complete-div.js"></script>
+    <script src="services/auto-complete.js"></script>
+    <script>
+      angular.module('myApp', ['angular-autocomplete']).controller('MyCtrl', function($scope) {
+        $scope.source3 = [{key:1, text:'One'}, {key:2, text:'Two'}, {key:3, text:'Three'}, {key:4, text:'Four'}];
+        $scope.callback = function(arg) {
+          console.log('value selected by autocomplete: ', arg);
+        };
+        $scope.foo5 = [{"key":4,"text":"Autocomplete"}];
+      }).directive('printSource', function(){
+        return function(scope, element, attrs) {
+          element[0].innerHTML = '<pre>'+document.querySelector(attrs.printSource).outerHTML.replace(/</g, '&lt;')+'</pre>';
+        };
+      });
+    </script>
+<style>
+#sh2 { 
+  display: inline-block;
+  background-color: lightblue; 
+  border-radius: 5px;
+  padding: 3px;
+  width: 50%;
+}
+
+#sh2 span {
+  display: inline-block;
+  background-color: darkblue;
+  color: #fff;
+  border: 1px solid #ccc;
+  border-radius: 3px;
+  padding: 5px;
+}
+
+#sh2 span a {
+  color: red;
+  text-decoration: none;
+}
+auto-complete-div {  
+  position: relative;
+}
+auto-complete-div input {  
+  outline: none;
+  border: 0;
+  padding: 0;
+  margin: 2px 0 0 3px;  background-color: #fff
+}
+auto-complete-div select {  
+  position: absolute;
+  top: 1.5em;
+  left: 0;
+  margin-top: 2px;
+  display : none;
+  width: auto;
+  min-width: 300px;
+  overflow-y: auto;
+  background-color: yellow;
+  box-shadow: 3px 3px 3px #ccc;
+}
+auto-complete-div select option {  
+  height: 2em;
+  padding-top: 0.5em;
+  border-bottom: 1px solid #ccc;
+}
+</style>
+  </head>
+
+  <body ng-app="myApp" ng-controller="MyCtrl">
+    
+    <div>
+      <h3>DIV[multiple] / hash</h3>
+      <br/>ng-model foo5: <b>{{ foo5 }}</b>
+      <br/>source: {{ source3 }} <br/>
+
+Custom Multi AutoComplete:
+<div id="sh2">
+  <span ng-repeat="obj in foo5 track by $index">
+    {{'('+obj.key+') '+obj.text}})
+    <a href="" ng-click="foo5.splice($index, 1)">x</a>
+  </span>
+  <auto-complete-div 
+    multiple
+    default-style="false"
+    ng-model="foo5" 
+    source="source3" 
+    value-changed="callback(value)" 
+    value-property="key" 
+    display-property="text">
+    <input size="2" />
+    <select></select>
+  </auto-complete-div>
+</div>
+
+<pre>
+  &lt;div id="sh2">
+    &lt;span ng-repeat="obj in foo5 track by $index">
+      {{'('+obj.key+') '+obj.text}})
+      &lt;a href="" ng-click="foo5.splice($index, 1)">x</a>
+    &lt;/span>
+    &lt;auto-complete-div 
+      ng-model="foo5" 
+      source="source3" 
+      value-changed="callback(value)" 
+      value-property="key" 
+      display-property="text"
+      multiple="" class="default-style">
+      &lt;input size="2" />
+      &lt;select></select>
+    &lt;/auto-complete-div>
+  &lt;/div>
+</pre>
+
+    </div>
+
+  </body>
+</html>
