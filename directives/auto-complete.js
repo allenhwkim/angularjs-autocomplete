@@ -47,8 +47,8 @@
       inputEl.style.width = (controlBCR.width - 28) + 'px';
     }
 
-    var selectEl = document.createElement('select');
-    acDiv.appendChild(selectEl);
+    var ulEl = document.createElement('ul');
+    acDiv.appendChild(ulEl);
 
     autoCompleteAttrs.map(function(attr) {
       attrs[attr] && acDiv.setAttribute(dasherize(attr), attrs[attr]);

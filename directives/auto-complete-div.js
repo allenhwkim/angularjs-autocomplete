@@ -2,44 +2,52 @@
   'use strict';
   var $timeout, $filter, $http, $compile, AutoComplete;
 
-  var showLoading = function(selectEl, show) {
-    if (!show) {
-      selectEl.innerHTML = '<option class="loading"> Loading </option>'; 
+  var showLoading = function(ulEl, show) {
+    if (show) {
+      ulEl.innerHTML = '<li class="loading"> Loading </li>'; 
     } else {
-      selectEl.querySelector('option.loading').remove();
+      ulEl.querySelector('li.loading') &&
+        ulEl.querySelector('li.loading').remove();
     }
   };
 
   var addListElements = function(scope, data) {
-    var inputEl = scope.inputEl, selectEl = scope.selectEl;
+    var inputEl = scope.inputEl, ulEl = scope.ulEl;
     var displayText, filteredData = data;
     if (typeof scope.source !== 'string') { // no filter for url source
       filteredData = $filter('filter')(data, scope.inputEl.value);
     }
-    while(selectEl.firstChild) { 
-      selectEl.removeChild(selectEl.firstChild);
+    while(ulEl.firstChild) { 
+      ulEl.removeChild(ulEl.firstChild);
     }
-    selectEl.setAttribute("size", filteredData.length);
     filteredData.forEach(function(el) {
-      var optionEl = document.createElement('option');
+      var liEl = document.createElement('li');
       var displayText = typeof el == 'object' ?
         el[scope.displayProperty] : el;
-      optionEl.innerHTML = displayText;
-      optionEl.object = el;
-      selectEl.appendChild(optionEl);
+      liEl.innerHTML = displayText;
+      liEl.object = el;
+      ulEl.appendChild(liEl);
     });
   };
 
+  var delay = (function(){
+    var timer = 0;
+    return function(callback, ms){
+      $timeout.cancel(timer);
+      timer = $timeout(callback, ms);
+    };
+  })();
+
   var loadList = function(scope) {
-    var inputEl = scope.inputEl, selectEl = scope.selectEl;
+    var inputEl = scope.inputEl, ulEl = scope.ulEl;
     if (typeof scope.source == 'string') {     // url
        var url= scope.source.replace(/:[a-z]+/i, inputEl.value); 
-       showLoading(selectEl, true);
+       showLoading(ulEl, true);
        $http.get(url).success(function(data){
+         showLoading(ulEl, false);
          addListElements(scope, data);
-         showLoading(selectEl, false);
        }).error(function(){
-         showLoading(selectEl, false);
+         showLoading(ulEl, false);
        });
     } else {
       addListElements(scope, scope.source);
@@ -49,81 +57,86 @@
   var linkFunc = function(scope, element, attrs) {
     var containerEl = element[0];
     var controlEl = element[0].controlEl;
+    controlEl.readOnly = true;
     var isMultiple = containerEl.hasAttribute('multiple');
     scope.inputEl = element[0].querySelector('input');
-    scope.selectEl =  element[0].querySelector('select');
+    scope.ulEl =  element[0].querySelector('ul');
 
     // add default class css to head tag
     if (scope.defaultStyle !== false) {
-      console.log('scope.defaultStyle', scope.defaultStyle);
       containerEl.className += ' default-style';
       AutoComplete.injectDefaultStyle();
     }
 
-    var inputEl = scope.inputEl, selectEl = scope.selectEl;
+    var inputEl = scope.inputEl, ulEl = scope.ulEl;
     var hideAutoselect = function() {
       $timeout(function() {
         var focusedEl = document.querySelector(':focus');
-        if (focusedEl != inputEl && focusedEl != selectEl) {
-          var elToHide = isMultiple ? selectEl : containerEl;
+        if (focusedEl != inputEl && focusedEl != ulEl) {
+          var elToHide = isMultiple ? ulEl : containerEl;
           elToHide.style.display = 'none';
-        } 
-      }, 100);
+       
+         } 
+      }, 200);
     };
 
     var focusInputEl = function(evt) {
-      selectEl.style.display = 'inline-block'; 
+      ulEl.style.display = 'block'; 
       inputEl.focus();
       inputEl.value = '';
       loadList(scope);
     };
+
     if (isMultiple) {
-      inputEl.parentNode.parentNode.addEventListener('click', focusInputEl, true);
+      inputEl.parentNode.parentNode.
+        addEventListener('click', focusInputEl, true);
     }
 
     /** listener of keydown, esc/enter, and click of OPTION */
     var select = function(evt) {
-      var optionEl;
+      var liEl;
       (evt.keyCode == 27) && (evt.target.style.display = 'none'); // esc
-      (evt instanceof MouseEvent)  && (optionEl = evt.target); // click
-      (evt.keyCode == 13) && (optionEl = evt.target.children[evt.target.selectedIndex]); //enter
-      if (optionEl) {
-        optionEl.tagName == "SELECT" && (optionEl = optionEl.firstChild);
-        var elToHide = isMultiple ? selectEl : containerEl;
+      (evt instanceof MouseEvent)  && (liEl = evt.target); // click
+      (evt.keyCode == 13) && (liEl = evt.target.children[evt.target.selectedIndex]); //enter
+      if (liEl) {
+        liEl.tagName == "SELECT" && (liEl = liEl.firstChild);
+        var elToHide = isMultiple ? ulEl : containerEl;
         elToHide.style.display = 'none';
 
         if (attrs.ngModel) {
           if (controlEl && controlEl.tagName == 'INPUT') {
-            scope.ngModel = optionEl.innerHTML ;
+            scope.ngModel = liEl.innerHTML ;
           } else if (isMultiple) {
-            scope.ngModel.push(optionEl.object);
+            scope.ngModel.push(liEl.object);
           } else {
-            scope.ngModel = optionEl.object;
+            scope.ngModel = liEl.object;
           }
         }
 
-        scope.valueChanged({value: optionEl.object}); //user scope
+        scope.valueChanged({value: liEl.object}); //user scope
         scope.$apply();
       }
     };
 
     inputEl.addEventListener('blur', hideAutoselect);
-    selectEl.addEventListener('blur', hideAutoselect);
+    ulEl.addEventListener('blur', hideAutoselect);
 
     /** when input element is newly focused, reload list */
     inputEl.addEventListener('focus', focusInputEl );
 
     /** when enters text to search, reload the list */
     inputEl.addEventListener('input', function() {
-      loadList(scope);
+      delay(function() { //executing after user stopped typing
+        loadList(scope);
+      }, 1000);
     });
 
     /** when presses down arrow in search box, focus to options */
     inputEl.addEventListener('keydown', function(evt) {
       evt.keyCode == 27 && hideAutoselect();
-      evt.keyCode == 40 && selectEl.focus();
-      if (evt.keyCode == 13 && selectEl.style.display !== 'none' ) {  
-        selectEl.firstChild.dispatchEvent(
+      //TODO: evt.keyCode == 40 && ulEl.firstChild.focus();
+      if (evt.keyCode == 13 && ulEl.style.display !== 'none' ) {  
+        ulEl.firstChild.dispatchEvent(
           new MouseEvent('click', {bubbles:true, view: window})
         );
         focusInputEl(); 
@@ -131,8 +144,8 @@
     });
 
     /** when presses enter in options, select the element */
-    selectEl.addEventListener('keydown', select);
-    selectEl.addEventListener('click', select);
+    ulEl.addEventListener('keydown', select);
+    ulEl.addEventListener('click', select);
   };
 
   var autoCompleteDiv =

@@ -43,6 +43,7 @@
 }
 auto-complete-div {  
   position: relative;
+  display: inline-block;
 }
 auto-complete-div input {  
   outline: none;
@@ -50,21 +51,25 @@ auto-complete-div input {
   padding: 0;
   margin: 2px 0 0 3px;  background-color: #fff
 }
-auto-complete-div select {  
-  position: absolute;
-  top: 1.5em;
-  left: 0;
-  margin-top: 2px;
+auto-complete-div ul {  
+  background-color: yellow;
+  border: 1px solid #ccc;
+  box-shadow: 3px 3px 3px #ccc;
+  box-sizing: border-box;
   display : none;
-  width: auto;
+  left: 0;
+  list-style-type: none;
+  margin-top: 2px;
+  margin: 0;
   min-width: 300px;
   overflow-y: auto;
-  background-color: yellow;
-  box-shadow: 3px 3px 3px #ccc;
+  padding: 0;
+  position: absolute;
+  top: 1.5em;
+  width: auto;
 }
-auto-complete-div select option {  
-  height: 2em;
-  padding-top: 0.5em;
+auto-complete-div ul li {  
+  padding: 2px 5px;
   border-bottom: 1px solid #ccc;
 }
 </style>
@@ -92,11 +97,11 @@ Custom Multi AutoComplete:
     value-property="key" 
     display-property="text">
     <input size="2" />
-    <select></select>
+    <ul></ul>
   </auto-complete-div>
 </div>
 
-<pre>
+<pre ng-non-bindable>
   &lt;div id="sh2">
     &lt;span ng-repeat="obj in foo5 track by $index">
       {{'('+obj.key+') '+obj.text}})
@@ -110,7 +115,7 @@ Custom Multi AutoComplete:
       display-property="text"
       multiple="" class="default-style">
       &lt;input size="2" />
-      &lt;select></select>
+      &lt;ul></ul>
     &lt;/auto-complete-div>
   &lt;/div>
 </pre>

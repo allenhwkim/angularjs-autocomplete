@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>test</title>
+    <script src="lib/angular.js"></script>
+    <script src="directives/auto-complete.js"></script>
+    <script src="directives/auto-complete-div.js"></script>
+    <script src="services/auto-complete.js"></script>
+    <script>
+      angular.module('myApp', ['angular-autocomplete']).controller('MyCtrl', function($scope) {
+        $scope.source1 = "source1.json";
+        $scope.callback = function(arg) {
+          console.log('value selected by autocomplete: ', arg);
+        };
+        $scope.foo1 = 'One';
+      }).directive('printSource', function(){
+        return function(scope, element, attrs) {
+          element[0].innerHTML = '<pre>'+document.querySelector(attrs.printSource).outerHTML.replace(/</g, '&lt;')+'</pre>';
+        };
+      }).config(function($httpProvider){
+        $httpProvider.interceptors.push(function($q, $timeout) {
+          return {
+            'response': function(response) {
+              var defer = $q.defer();
+              $timeout(function() {
+                defer.resolve(response);
+              }, 1000);
+              return defer.promise;
+            }
+          };
+        });
+      });
+    </script>
+    <style>
+      input[auto-complete] {width: 300px; height: 30px}
+      select[auto-complete] {width: 300px; height: 30px; -webkit-appearance: menulist-button;}
+    </style>
+  </head>
+
+  <body ng-app="myApp" ng-controller="MyCtrl">
+    
+    <div>
+      <h3>INPUT / primitive array:</h3>
+      <br/>ng-model foo1: <b>{{foo1}}</b> 
+      <br/>source: {{source1}} <br/>
+      <div print-source='#ip'></div>
+      <input id='ip' auto-complete ng-model="foo1" source="source1" 
+        value-changed="callback(value)"/>
+    </div>
+
+  </body>
+</html>

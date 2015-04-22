@@ -10,11 +10,30 @@
     '  background-color: #fff'+
     '}' + 
 
-    'auto-complete-div.default-style select {'+
+    'auto-complete-div.default-style ul {'+
+    '  background-color: #fff;'+
     '  margin-top: 2px;'+
     '  display : none;'+
     '  width : 100%;'+
-    '  overflow-y: auto'+
+    '  overflow-y: auto;'+
+    '  list-style-type: none;'+
+    '  margin: 0;'+
+    '  padding: 0;'+
+    '  border: 1px solid #ccc;'+
+    '  box-sizing: border-box;'+
+    '}' + 
+
+    'auto-complete-div.default-style ul li {'+
+    '  padding: 2px 5px;'+
+    '  border-bottom: 1px solid #eee;'+
+    '}' + 
+
+    'auto-complete-div.default-style ul li:last-child {'+
+    '  border-bottom: none;'+
+    '}' + 
+
+    'auto-complete-div.default-style ul li:hover {'+
+    '  background-color: #ccc;'+
     '}' + 
 
     'div .auto-complete-repeat {'+
@@ -34,6 +53,7 @@
 
     'auto-complete-div[multiple].default-style {'+
     '  position: relative;' +
+    '  display: inline-block;' +
     '}' +
 
     'auto-complete-div[multiple].default-style input {'+
@@ -42,7 +62,7 @@
     '  border-radius: 0;' +
     '}' +
 
-    'auto-complete-div[multiple].default-style select {'+
+    'auto-complete-div[multiple].default-style ul {'+
     '  position: absolute;'+
     '  top: 1.5em;'+
     '  left: 0;'+
