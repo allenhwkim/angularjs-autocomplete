@@ -1,5 +1,6 @@
 (function(){
   'use strict';
+  var $q, $http;
 
   var defaultStyle = 
     'auto-complete-div.default-style input {'+
@@ -98,12 +99,54 @@
     }
   };
 
+  var getRemoteData = function(source, query, pathToData) {
+    var deferred = $q.defer(), httpGet;
+    if (typeof source == 'string') {
+      var keyValues = []; 
+      for (var key in query) { // replace all keyword to value
+        var regexp = new RegExp(key, 'g');
+        if (source.match(regexp)) {
+          source = source.replace(regexp, query[key]);
+        } else {
+          keyValues.push(key + "=" + query[key]);
+        }
+      }
+      if (keyValues.length) {
+        var qs = keyValues.join("&");
+        source += source.match(/\?[a-z]/i) ? qs : ('?' + qs);
+      }
+      httpGet = $http.get(source);
+    } else if (source.$promise) { 
+      httpGet = source(query).$promise;
+    } else if (typeof source == 'function') {
+      httpGet = source(query);
+    }
+
+    httpGet.success(function(data) {
+      console.log('data', data);
+      var list = data;
+      if (pathToData) {
+        var paths = pathToData.split('.');
+        paths.forEach(function(el) {
+          list = list[el];
+        });
+      }
+      deferred.resolve(list);
+    }).error(function(error) {
+      deferred.reject(error);
+    });
+
+    return deferred.promise;
+  };
+
   angular.module('angular-autocomplete').
-    factory('AutoComplete', function() {
+    factory('AutoComplete', function(_$q_, _$http_) {
+      $q = _$q_, $http = _$http_;
       return {
         defaultStyle: defaultStyle,
         dasherize: dasherize,
         getStyle: getStyle,
+        getRemoteData: getRemoteData,
         injectDefaultStyle: injectDefaultStyleToHead
       };
     });

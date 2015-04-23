@@ -1,6 +1,6 @@
 (function(){
   'use strict';
-  var $timeout, $filter, $http, $compile, AutoComplete;
+  var $timeout, $filter, $compile, AutoComplete;
 
   var showLoading = function(ulEl, show) {
     if (show) {
@@ -43,12 +43,14 @@
     if (typeof scope.source == 'string') {     // url
        var url= scope.source.replace(/:[a-z]+/i, inputEl.value); 
        showLoading(ulEl, true);
-       $http.get(url).success(function(data){
-         showLoading(ulEl, false);
-         addListElements(scope, data);
-       }).error(function(){
-         showLoading(ulEl, false);
-       });
+       AutoComplete.getRemoteData(
+         scope.source, {keyword: inputEl.value}, scope.dataPath).then(
+         function(data) {
+           showLoading(ulEl, false);
+           addListElements(scope, data);
+         }, function(){
+           showLoading(ulEl, false);
+         });
     } else {
       addListElements(scope, scope.source);
     }
@@ -149,10 +151,9 @@
   };
 
   var autoCompleteDiv =
-    function(_$timeout_, _$filter_, _$http_, _$compile_, _AutoComplete_) {
+    function(_$timeout_, _$filter_, _$compile_, _AutoComplete_) {
       $timeout = _$timeout_;
       $filter = _$filter_;
-      $http = _$http_; 
       $compile = _$compile_;
       AutoComplete = _AutoComplete_;
 
@@ -160,7 +161,9 @@
         restrict: 'E',
         scope: {
           ngModel : '=', 
+          ngDisabled : '=', 
           source : '=', 
+          dataPath : '@', 
           defaultStyle : '=', 
           valueProperty: '@',
           displayProperty: '@',

@@ -11,7 +11,8 @@
 
   // accepted attributes
   var autoCompleteAttrs = [
-    'ngModel', 'source', 'valueChanged',
+    'ngModel', 'ngDisabled', 'valueChanged',
+    'source', 'dataPath', 
     'defaultStyle', 'valueProperty', 'displayProperty'
   ];
 
@@ -116,10 +117,8 @@
       acDiv.style.display = 'none';
       controlEl.parentNode.insertBefore(acDiv, controlEl.nextSibling);
       controlEl.addEventListener('click', function() {
-        if (!controlEl.disabled) {
-          positionACDiv(controlEl, acDiv);
-          acDiv.firstChild.focus();
-        }
+        positionACDiv(controlEl, acDiv);
+        acDiv.firstChild.focus();
       });
     }
 
