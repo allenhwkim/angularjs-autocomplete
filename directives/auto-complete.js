@@ -36,6 +36,8 @@
     acDiv.controlEl = controlEl;
 
     var inputEl = document.createElement('input');
+    attrs.ngDisabled && 
+      inputEl.setAttribute('ng-disabled', attrs.ngDisabled);
     acDiv.appendChild(inputEl);
 
     // for multi select, set input field length dynamic
@@ -67,11 +69,14 @@
   };
 
   var buildMultiACDiv = function(controlEl, attrs) {
-    var deleteLink = document.createElement('a');
+    var deleteLink = document.createElement('button');
     deleteLink.innerHTML = 'x';
-    deleteLink.setAttribute('href', '');
     deleteLink.className += ' delete';
     deleteLink.setAttribute('ng-click', attrs.ngModel+'.splice($index, 1)');
+    console.log('attrs.ngDisabled', attrs.ngDisabled);
+    if (attrs.ngDisabled) {
+      deleteLink.setAttribute('ng-disabled', attrs.ngDisabled);
+    }
 
     var ngRepeatDiv = document.createElement('span');
     ngRepeatDiv.className += ' auto-complete-repeat';

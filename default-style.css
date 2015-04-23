@@ -1,3 +1,15 @@
+/**
+ *
+ * This style is already applied through directive.
+ * 
+ * Thus, It is not required to add this for default styling
+ *
+ * However, if you want to change this default style,
+ * then this is good starting point to build your own.
+ *
+ * For custom styling, set default-style="false"
+ *
+ */
 auto-complete-div.default-style input {
  outline: none; 
   border: 0;
@@ -43,8 +55,9 @@ div .auto-complete-repeat {
 
 div .auto-complete-repeat .delete {
   margin: 0 3px;
-  text-decoration: none;
   color: red;
+  border: none;
+  background-color: transparent; 
 }
 
 auto-complete-div[multiple].default-style {

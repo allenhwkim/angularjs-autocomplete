@@ -62,5 +62,15 @@
         display-property="text" 
         value-changed="callback(value)"></select>
     </div>
+
+    <div>
+      <h3>SELECT[multiple][ng-disabled]</h3>
+      <br/>source: {{ source1 }} <br/>
+      <div print-source='#sp-disabled'></div>
+      <select id='sp-disabled' multiple ng-disabled="true" ng-model="foo3" 
+        auto-complete 
+        source="source1" 
+        value-changed="callback(value)"></select>
+    </div>
   </body>
 </html>

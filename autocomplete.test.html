@@ -90,5 +90,12 @@
         value-changed="callback(value)"/>
     </div>
 
+    <div>
+      <h3>SELECT[ng-disabled]</h3>
+      <div print-source='#sp-disabled'></div>
+      <select id='sp-disabled' auto-complete ng-disabled="true" ng-model="foo3" source="source1"
+        value-changed="callback(value)"></select>
+    </div>
+
   </body>
 </html>

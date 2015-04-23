@@ -83,10 +83,12 @@
     };
 
     var focusInputEl = function(evt) {
-      ulEl.style.display = 'block'; 
-      inputEl.focus();
-      inputEl.value = '';
-      loadList(scope);
+      if (!scope.ngDisabled) {
+        ulEl.style.display = 'block'; 
+        inputEl.focus();
+        inputEl.value = '';
+        loadList(scope);
+      }
     };
 
     if (isMultiple) {

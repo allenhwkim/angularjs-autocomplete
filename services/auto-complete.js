@@ -48,8 +48,9 @@
 
     'div .auto-complete-repeat .delete {'+
     '  margin: 0 3px;' +
-    '  text-decoration: none;' +
     '  color: red;' +
+    '  border: none;' +
+    '  background-color: transparent; ' +
     '}' +
 
     'auto-complete-div[multiple].default-style {'+
