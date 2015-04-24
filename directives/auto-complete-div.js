@@ -13,14 +13,8 @@
 
   var addListElements = function(scope, data) {
     var inputEl = scope.inputEl, ulEl = scope.ulEl;
-    var displayText, filteredData = data;
-    if (typeof scope.source !== 'string') { // no filter for url source
-      filteredData = $filter('filter')(data, scope.inputEl.value);
-    }
-    while(ulEl.firstChild) { 
-      ulEl.removeChild(ulEl.firstChild);
-    }
-    filteredData.forEach(function(el) {
+    var displayText;
+    data.forEach(function(el) {
       var liEl = document.createElement('li');
       var displayText = typeof el == 'object' ?
         el[scope.displayProperty] : el;
@@ -40,20 +34,27 @@
 
   var loadList = function(scope) {
     var inputEl = scope.inputEl, ulEl = scope.ulEl;
-    if (typeof scope.source == 'string') {     // url
-       var url= scope.source.replace(/:[a-z]+/i, inputEl.value); 
-       showLoading(ulEl, true);
-       AutoComplete.getRemoteData(
-         scope.source, {keyword: inputEl.value}, scope.dataPath).then(
-         function(data) {
-           showLoading(ulEl, false);
-           addListElements(scope, data);
-         }, function(){
-           showLoading(ulEl, false);
-         });
-    } else {
-      addListElements(scope, scope.source);
+    while(ulEl.firstChild) { 
+      ulEl.removeChild(ulEl.firstChild);
     }
+    if (scope.source.constructor.name == 'Array') { // local source
+      var filteredData = $filter('filter')(scope.source, inputEl.value);
+      addListElements(scope, filteredData);
+    } else { // remote source
+      ulEl.style.display = 'none';
+      if (inputEl.value.length >= scope.minChars) {
+        ulEl.style.display = 'block';
+        showLoading(ulEl, true);
+        AutoComplete.getRemoteData(
+          scope.source, {keyword: inputEl.value}, scope.pathToData).then(
+          function(data) {
+            showLoading(ulEl, false);
+            addListElements(scope, data);
+          }, function(){
+            showLoading(ulEl, false);
+          });
+      } // if
+    } // else remote source
   };
 
   var linkFunc = function(scope, element, attrs) {
@@ -72,13 +73,9 @@
 
     var inputEl = scope.inputEl, ulEl = scope.ulEl;
     var hideAutoselect = function() {
+      var elToHide = isMultiple ? containerEl : ulEl;
       $timeout(function() {
-        var focusedEl = document.querySelector(':focus');
-        if (focusedEl != inputEl && focusedEl != ulEl) {
-          var elToHide = isMultiple ? ulEl : containerEl;
-          elToHide.style.display = 'none';
-       
-         } 
+        elToHide.style.display = 'none';
       }, 200);
     };
 
@@ -130,9 +127,10 @@
 
     /** when enters text to search, reload the list */
     inputEl.addEventListener('input', function() {
+      var delayMs = scope.source.constructor.name == 'Array' ? 10 : 500;
       delay(function() { //executing after user stopped typing
         loadList(scope);
-      }, 1000);
+      }, delayMs);
     });
 
     /** when presses down arrow in search box, focus to options */
@@ -165,8 +163,9 @@
           ngModel : '=', 
           ngDisabled : '=', 
           source : '=', 
-          dataPath : '@', 
+          minChars : '=', 
           defaultStyle : '=', 
+          pathToData : '@', 
           valueProperty: '@',
           displayProperty: '@',
           valueChanged : '&'

@@ -12,7 +12,7 @@
   // accepted attributes
   var autoCompleteAttrs = [
     'ngModel', 'ngDisabled', 'valueChanged',
-    'source', 'dataPath', 
+    'source', 'pathToData', 'minChars',
     'defaultStyle', 'valueProperty', 'displayProperty'
   ];
 

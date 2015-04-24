@@ -121,21 +121,27 @@
       httpGet = source(query).$promise;
     } else if (typeof source == 'function') {
       httpGet = source(query);
+      httpGet.$promise && (httpGet = source(query).$promise);
+      if (!httpGet.then) {
+        throw "source function must return a promise";
+      }
     }
 
-    httpGet.success(function(data) {
-      console.log('data', data);
-      var list = data;
-      if (pathToData) {
-        var paths = pathToData.split('.');
-        paths.forEach(function(el) {
-          list = list[el];
-        });
+    httpGet.then(
+      function(resp) {
+        var list = resp.constructor.name == 'Resource' ? resp : resp.data;
+        if (pathToData) {
+          var paths = pathToData.split('.');
+          paths.forEach(function(el) {
+            list = list[el];
+          });
+        }
+        deferred.resolve(list);
+      }, 
+      function(error) {
+        deferred.reject(error);
       }
-      deferred.resolve(list);
-    }).error(function(error) {
-      deferred.reject(error);
-    });
+    );
 
     return deferred.promise;
   };

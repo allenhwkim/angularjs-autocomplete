@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>test</title>
+    <script src="https://code.angularjs.org/1.3.15/angular.js"></script>
+    <script src="https://code.angularjs.org/1.3.15/angular-resource.js"></script>
+    <script src="directives/auto-complete.js"></script>
+    <script src="directives/auto-complete-div.js"></script>
+    <script src="services/auto-complete.js"></script>
+<script>
+angular.module('myApp', ['ngResource', 'angular-autocomplete']).controller('MyCtrl', function($scope, $http, $resource) {
+  $scope.source1 = "http://maps.googleapis.com/maps/api/geocode/json?address=:keyword";
+  $scope.source2 = function(param) { 
+    return $http.get("http://maps.googleapis.com/maps/api/geocode/json?address="+param.keyword);
+  };
+  $scope.source3 = $resource("http://maps.googleapis.com/maps/api/geocode/json?address=:keyword", {keyword:'@keyword'}).get;
+
+  $scope.callback = function(address) {
+    $scope.address = address;
+  }
+  $scope.source = $scope.source1;
+});
+</script>
+    <style>
+      input[auto-complete] {width: 300px; height: 30px}
+      select[auto-complete] {width: 300px; height: 30px; -webkit-appearance: menulist-button;}
+    </style>
+  </head>
+
+  <body ng-app="myApp" ng-controller="MyCtrl">
+    
+    <h2>AutoComplete With Google Geocode</h2>
+    <h3>Autocomplete Remote Source</h3>
+    <input type="radio" ng-model="source" ng-value="source1"> URL string<br/>
+    <input type="radio" ng-model="source" ng-value="source2"> function<br/>
+    <input type="radio" ng-model="source" ng-value="source3"> resource
+
+    <div>
+      <br/>ng-model address text: <b>{{addressText}}</b> 
+      <br/>source: <pre>{{source}}</pre> <br/>
+      <div print-source='#ip'></div>
+      <input id='ip' 
+        auto-complete 
+        ng-model="addressText" 
+        source="source" 
+        path-to-data="results"
+        display-property="formatted_address"
+        min-chars="2"
+        value-changed="callback(value)"/>
+      <br/> address :<pre>{{address|json}}</pre>
+    </div>
+
+  </body>
+</html>
