@@ -64,7 +64,7 @@
     var controlBCR = controlEl.getBoundingClientRect();
 
     var inputEl = acDiv.querySelector('input');
-    var height = controlEl.multiple ? '': (controlBCR.height - 6) + 'px';
+    var height = controlEl.multiple ? '': (controlBCR.height) + 'px';
     inputEl.style.height = height;
   };
 

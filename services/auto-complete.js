@@ -5,10 +5,15 @@
   var defaultStyle = 
     'auto-complete-div.default-style input {'+
     '  outline: none; '+
-    '  border: 0;'+
-    '  padding: 0;'+
-    '  margin: 2px 0 0 3px;'+
-    '  background-color: #fff'+
+    '  border: 2px solid transparent;'+
+    '  border-width: 3px 2px;'+
+    '  margin: 0;'+
+    '  box-sizing: border-box;'+
+    '  background-clip: content-box;'+
+    '}' + 
+
+    'select ~ auto-complete-div.default-style input {'+
+    '  border-width: 3px 7px;'+
     '}' + 
 
     'auto-complete-div.default-style ul {'+
