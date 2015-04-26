@@ -1,0 +1,4 @@
+1. gulpfiles.js to build angular-autocomplete.js
+2. bower.json to export build directory
+3. tumblr article for promotion
+4. github pages using demos
