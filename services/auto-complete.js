@@ -34,6 +34,10 @@
     '  border-bottom: 1px solid #eee;'+
     '}' + 
 
+    'auto-complete-div.default-style ul li.selected {'+
+    '  background-color: #ccc;'+
+    '}' + 
+
     'auto-complete-div.default-style ul li:last-child {'+
     '  border-bottom: none;'+
     '}' + 
@@ -56,6 +60,10 @@
     '  color: red;' +
     '  border: none;' +
     '  background-color: transparent; ' +
+    '}' +
+
+    'div .auto-complete-repeat .delete[disabled] {'+
+    '  display: none;' +
     '}' +
 
     'auto-complete-div[multiple].default-style {'+

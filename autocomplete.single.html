@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>test</title>
+    <script src="lib/angular.js"></script>
+    <script src="directives/auto-complete.js"></script>
+    <script src="directives/auto-complete-div.js"></script>
+    <script src="services/auto-complete.js"></script>
+    <script>
+      angular.module('myApp', ['angular-autocomplete']).controller('MyCtrl', function($scope) {
+        $scope.source1 = ["this", "is", "array", "of", "text"]; 
+        $scope.source2 = [{id:1, value:'One'}, {id:2, value:'Two'}, {id:3, value:'Three'}, {id:4, value:'Four'}];
+        $scope.callback = function(arg) {
+          $scope.selected = arg;
+        };
+        $scope.foo = "model value goes here";
+        $scope.source = $scope.source1;
+        $scope.selected = 'selected by callback object goes here';
+        $scope.displyProp = 'value';
+        $scope.valueProp = 'id';
+        $scope.tagName = 'input';
+      });
+      var printHTML = function(selector) {
+        document.write('<pre>'+
+          document.querySelector(selector).outerHTML.replace(/</g,'\n&lt;').replace(/[ ]/g,"\n  ") +
+        '</pre>')
+      };
+    </script>
+    <style>
+      input[auto-complete] {width: 300px; height: 30px}
+      select[auto-complete] {width: 300px; height: 30px; -webkit-appearance: menulist-button;}
+    </style>
+  </head>
+
+  <body ng-app="myApp" ng-controller="MyCtrl">
+    
+    <h1> Autocomplete - single </h1>
+
+    Autocomplete source
+    <ul>
+      <li>
+        <input type="radio" ng-model="source" ng-value="source1" name="source">
+        {{source1}}</li>
+      <li>
+        <input type="radio" ng-model="source" ng-value="source2" name="source">
+        {{source2}}</li>
+    </ul>
+
+    HTML Tag :: {{tagName}}
+    <ul>
+      <li><input type="radio" ng-model="tagName" value="input" name="tag"/> INPUT </li>
+      <li><input type="radio" ng-model="tagName" value="select" name="tag"/> SELECT</li>
+    </ul>
+
+    <div ng-show="tagName=='input'">
+      <input id='ih' 
+        ng-model="foo"
+        ng-disabled="disabled"
+        auto-complete
+        source="source" 
+        value-changed="callback(value)"/>
+      <input type="checkbox" ng-model="disabled"> Disable 
+      <script>printHTML('input#ih');</script>
+    </div>
+
+    <div ng-show="tagName=='select'">
+      <select id='sh' 
+        ng-model="foo" 
+        ng-disabled="disabled"
+        auto-complete 
+        source="source"
+        value-changed="callback(value)"></select>
+      <input type="checkbox" ng-model="disabled"> Disable 
+      <script>printHTML('select');</script>
+    </div>
+
+    <br/>$scope.foo:  <b>{{ foo }}</b>
+    <br/>$scope.source: {{ source }}
+    <br/>$scope.selected = {{ selected }}
+  </body>
+</html>

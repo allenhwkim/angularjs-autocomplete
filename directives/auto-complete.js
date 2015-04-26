@@ -43,11 +43,10 @@
     // for multi select, set input field length dynamic
     if (controlEl.tagName == 'SELECT' && controlEl.multiple) {
       inputEl.setAttribute('size', 2);
-      inputEl.addEventListener('keydown', function(){
-        this.setAttribute('size', this.value.length+1);
-      });
     } else {
-      inputEl.style.width = (controlBCR.width - 28) + 'px';
+      var width = controlBCR.width;
+      (controlEl.tagName == 'SELECT') && (width -= 28);
+      inputEl.style.width = width + 'px';
     }
 
     var ulEl = document.createElement('ul');
@@ -62,10 +61,19 @@
   // default style autocomplete-div input and select tag
   var applyDefaultStyle = function(controlEl, acDiv) {
     var controlBCR = controlEl.getBoundingClientRect();
-
-    var inputEl = acDiv.querySelector('input');
-    var height = controlEl.multiple ? '': (controlBCR.height) + 'px';
-    inputEl.style.height = height;
+    var targetStyle;
+    // set width/heigth of multiple select box
+    if (controlEl && controlEl.multiple) {
+      targetStyle = acDiv.parentElement.style;
+      targetStyle.display = 'inline-block';
+      targetStyle.width = controlBCR.width + 'px';
+      targetStyle.minHeight = controlBCR.height + 'px';
+    }
+    // set width/height of input box
+    else { 
+      targetStyle = acDiv.querySelector('input').style;
+      targetStyle.height = controlBCR.height + 'px';
+    }
   };
 
   var buildMultiACDiv = function(controlEl, attrs) {
@@ -73,7 +81,6 @@
     deleteLink.innerHTML = 'x';
     deleteLink.className += ' delete';
     deleteLink.setAttribute('ng-click', attrs.ngModel+'.splice($index, 1)');
-    console.log('attrs.ngDisabled', attrs.ngDisabled);
     if (attrs.ngDisabled) {
       deleteLink.setAttribute('ng-disabled', attrs.ngDisabled);
     }
@@ -108,25 +115,23 @@
 
     // 2. build <auto-complete-div>
     var acDiv = buildACDiv(controlEl, tAttrs);
-    (tAttrs.defaultStyle != 'false') && 
-      applyDefaultStyle(controlEl, acDiv);
-
-    // for multiple select
-    if (controlEl.tagName == "SELECT" && tAttrs.ngModel && tAttrs.multiple) {
+    if (controlEl.tagName == "SELECT" && 
+      tAttrs.ngModel && tAttrs.multiple) { // for multiple select
       var multiACDiv = buildMultiACDiv(controlEl, tAttrs);
       acDiv.setAttribute("multiple","");
       multiACDiv.appendChild(acDiv);
       controlEl.parentNode.insertBefore(multiACDiv, controlEl.nextSibling);
+      (tAttrs.defaultStyle != 'false') && applyDefaultStyle(controlEl, acDiv);
       controlEl.style.display = 'none';
     } else { //for input and single select
       acDiv.style.display = 'none';
       controlEl.parentNode.insertBefore(acDiv, controlEl.nextSibling);
+      (tAttrs.defaultStyle != 'false') && applyDefaultStyle(controlEl, acDiv);
       controlEl.addEventListener('click', function() {
         positionACDiv(controlEl, acDiv);
         acDiv.firstChild.focus();
       });
     }
-
   }; // compileFunc
 
   angular.module('angular-autocomplete',[]);
