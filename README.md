@@ -12,9 +12,10 @@ Features
 Examples
 --------
 
-  * https://rawgit.com/allenhwkim/angular-autocomplete/master/autocomplete.test.html
+  * https://rawgit.com/allenhwkim/angular-autocomplete/master/autocomplete.single.html
   * https://rawgit.com/allenhwkim/angular-autocomplete/master/autocomplete.multi.html
-  * https://rawgit.com/allenhwkim/angular-autocomplete/master/autocomplete.multi.custom.html
+  * https://rawgit.com/allenhwkim/angular-autocomplete/master/autocomplete.multi.custom.html  
+  * https://rawgit.com/allenhwkim/angular-autocomplete/master/autocomplete.remote.html 
 
 Attributes
 --------
@@ -29,6 +30,8 @@ Attributes
 TODO:
 --------
 
-  * need to test with remote source
-  * need to accept soruce as $promise
+  1. gulpfiles.js to build angular-autocomplete.js
+  2. bower.json to export build directory
+  3. tumblr article for promotion
+  4. github pages using demos
 
