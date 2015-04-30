@@ -2,6 +2,12 @@ AngularJS Autocomplete
 ======================
 single or multi autocomplete by static or remote source for INPUT and SELECT tag
 
+
+![Imgur](http://i.imgur.com/Fj0avbY.png?1)
+![Imgur](http://i.imgur.com/46crVoI.png?1)
+![Imgur](http://i.imgur.com/1BhGlVn.png)
+![Imgur](http://i.imgur.com/xFxsgUY.png)
+
 Features
 --------
 
@@ -9,12 +15,15 @@ Features
   * It does not require more tags such as ui-select-match, ui-select-choices
   * It treat SELECT tag autocomplete as different from tagging
 
+
 Examples
 --------
-  * https://rawgit.com/allenhwkim/angular-autocomplete/master/test/autocomplete.single.html
-  * https://rawgit.com/allenhwkim/angular-autocomplete/master/test/autocomplete.multi.html
-  * https://rawgit.com/allenhwkim/angular-autocomplete/master/test/autocomplete.multi.custom.html  
-  * https://rawgit.com/allenhwkim/angular-autocomplete/master/test/autocomplete.remote.html 
+  
+  * [Single Select](http://rawgit.com/allenhwkim/angular-autocomplete/master/test/autocomplete.single.html)
+  * [Multi Select](http://rawgit.com/allenhwkim/angular-autocomplete/master/test/autocomplete.multi.html)
+  * [Custom Design](http://rawgit.com/allenhwkim/angular-autocomplete/master/test/autocomplete.multi.custom.html)
+  * [Google Address Complete](http://rawgit.com/allenhwkim/angular-autocomplete/master/test/autocomplete.remote.html)
+
 
 Attributes
 --------
