@@ -11,11 +11,10 @@ Features
 
 Examples
 --------
-
-  * https://rawgit.com/allenhwkim/angular-autocomplete/master/autocomplete.single.html
-  * https://rawgit.com/allenhwkim/angular-autocomplete/master/autocomplete.multi.html
-  * https://rawgit.com/allenhwkim/angular-autocomplete/master/autocomplete.multi.custom.html  
-  * https://rawgit.com/allenhwkim/angular-autocomplete/master/autocomplete.remote.html 
+  * https://rawgit.com/allenhwkim/angular-autocomplete/master/test/autocomplete.single.html
+  * https://rawgit.com/allenhwkim/angular-autocomplete/master/test/autocomplete.multi.html
+  * https://rawgit.com/allenhwkim/angular-autocomplete/master/test/autocomplete.multi.custom.html  
+  * https://rawgit.com/allenhwkim/angular-autocomplete/master/test/autocomplete.remote.html 
 
 Attributes
 --------
