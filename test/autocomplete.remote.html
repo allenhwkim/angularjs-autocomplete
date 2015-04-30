@@ -9,11 +9,11 @@
   <script src="../services/auto-complete.js"></script>
   <script>
   angular.module('myApp', ['ngResource', 'angular-autocomplete']).controller('MyCtrl', function($scope, $http, $resource) {
-    $scope.source1 = "http://maps.googleapis.com/maps/api/geocode/json?address=:keyword";
+    $scope.source1 = "https://maps.googleapis.com/maps/api/geocode/json?address=:keyword";
     $scope.source2 = function(param) { 
-      return $http.get("http://maps.googleapis.com/maps/api/geocode/json?address="+param.keyword);
+      return $http.get("https://maps.googleapis.com/maps/api/geocode/json?address="+param.keyword);
     };
-    $scope.source3 = $resource("http://maps.googleapis.com/maps/api/geocode/json?address=:keyword", {keyword:'@keyword'}).get;
+    $scope.source3 = $resource("https://maps.googleapis.com/maps/api/geocode/json?address=:keyword", {keyword:'@keyword'}).get;
 
     $scope.callback = function(address) {
       $scope.address = address;
