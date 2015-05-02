@@ -31,15 +31,15 @@ For Bower users,
 
   `$ bower install angular-autocomplete`
 
-1. Include `angular-autocomplete.min.js`
+1. Include `angular-autocomplete.min.js`  
     `<script src="http://rawgit.com/allenhwkim/angular-autocomplete.min.js"></script>`
 
-2. add it as a dependency
+2. add it as a dependency  
     `var myApp = angular.module('myApp', ['angular-autocomplete']);`
 
-3. Use it
+3. Use it  
 
-    $scope.listOfChoices = ['this', 'is', 'list', 'of', 'choices];
+    `$scope.listOfChoices = ['this', 'is', 'list', 'of', 'choices];`
 
     `<input auto-complete source="listOfChoices">`
 
