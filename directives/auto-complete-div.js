@@ -39,6 +39,7 @@
     }
     if (scope.source.constructor.name == 'Array') { // local source
       var filteredData = $filter('filter')(scope.source, inputEl.value);
+      ulEl.style.display = 'block';
       addListElements(scope, filteredData);
     } else { // remote source
       ulEl.style.display = 'none';
@@ -140,6 +141,7 @@
             scope.ngModel = liEl.object;
           }
         }
+        inputEl.value = '';
         scope.valueChanged({value: liEl.object}); //user scope
       });
     };
