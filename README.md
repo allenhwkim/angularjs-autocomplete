@@ -47,7 +47,7 @@ For Bower users,
 Attributes
 --------
 
-  * source(required) : scope variable or function which is identified as a source of autocomplete
+  * **source**(required) : scope variable or function which is identified as a source of autocomplete
     It coule be array, url, or a function
 
     * array example: 
@@ -64,25 +64,25 @@ Attributes
           }
       * `$resource("http://maps.googleapis.com/maps/api/geocode/json?address=:keyword", {keyword:'@keyword'}).get`
 
-  * ng-model(optional) : ng-model for INPUT or SELECT element  
-  * value-Changed(optional) : callback function when value is changed. Takes an argument as selected value.  In example,  
+  * **ng-model**(optional) : ng-model for INPUT or SELECT element  
+  * **value-Changed**(optional) : callback function when value is changed. Takes an argument as selected value.  In example,  
 
         $scope.callback = function(arg) {
           $scope.selected = arg;
         };
 
-  * default-style(optional) : true as default. For your own styling, set `default-style="false"` and provide your own css.  
+  * **default-style**(optional) : true as default. For your own styling, set `default-style="false"` and provide your own css.  
     The example of customized css style is found at [custom multiple select](https://rawgit.com/allenhwkim/angular-autocomplete/master/autocomplete.multi.custom.html).   
     You can also find [default-style](https://rawgit.com/allenhwkim/angular-autocomplete/master/default-style.css) for starting point.
 
-  * value-property(optional): "id" as default. When you define an array of hashes as source, the key of hash for ng-model value.  
+  * **value-property**(optional): "id" as default. When you define an array of hashes as source, the key of hash for ng-model value.  
     e.g., 'key'
-  * display-property(optional) : "value" as default. When you define an array of hashes as source, the key of hash for display.  
+  * **display-property**(optional) : "value" as default. When you define an array of hashes as source, the key of hash for display.  
     e.g., 'text'
-  * min-chars(optional): 0 as default, if defined, autocomplete won't show any until length of input is greater than minimum charaters.  
+  * **min-chars**(optional): 0 as default, if defined, autocomplete won't show any until length of input is greater than minimum charaters.  
 
 
-license
+License
 =======
 
   [MIT License](https://github.com/allenhwkim/angular-autocomplete/blob/master/LICENSE)
