@@ -15,7 +15,6 @@ Features
   * It does not require more tags such as &lt;ui-select-match>, &lt;ui-select-choices>, or &lt;autocomplete>
   * It treat SELECT element as select element, and INPUT element as INPUT element
 
-
 Examples
 --------
   
@@ -23,6 +22,26 @@ Examples
   * [Multi Select](http://rawgit.com/allenhwkim/angular-autocomplete/master/test/autocomplete.multi.html)
   * [Custom Design](http://rawgit.com/allenhwkim/angular-autocomplete/master/test/autocomplete.multi.custom.html)
   * [Google Address Complete](http://rawgit.com/allenhwkim/angular-autocomplete/master/test/autocomplete.remote.html)
+
+
+To Get Started
+--------------
+
+For Bower users, 
+
+  `$ bower install angular-autocomplete`
+
+1. Include `angular-autocomplete.min.js`
+    `<script src="http://rawgit.com/allenhwkim/angular-autocomplete.min.js"></script>`
+
+2. add it as a dependency
+    `var myApp = angular.module('myApp', ['angular-autocomplete']);`
+
+3. Use it
+
+    $scope.listOfChoices = ['this', 'is', 'list', 'of', 'choices];
+
+    `<input auto-complete source="listOfChoices">`
 
 
 Attributes
@@ -61,3 +80,9 @@ Attributes
   * display-property(optional) : "value" as default. When you define an array of hashes as source, the key of hash for display.  
     e.g., 'text'
   * min-chars(optional): 0 as default, if defined, autocomplete won't show any until length of input is greater than minimum charaters.  
+
+
+license
+=======
+
+  [MIT License](https://github.com/allenhwkim/angular-autocomplete/blob/master/LICENSE)
