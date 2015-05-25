@@ -5,6 +5,6 @@
   "homepage": "https://github.com/allenhwkim/angularjs-autocomplete",
   "authors": ["Allen Kim <allenhwkim@gmail.com>"],
   "description": "Single or Multi Autocomplete for INPUT and SELECT tag",
-  "keywords": ['select', 'input', 'select2', 'autocomplete', 'remote'],
+  "keywords": ["select", "input", "select2", "autocomplete", "remote"],
   "license": "MIT"
 }
