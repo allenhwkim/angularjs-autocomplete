@@ -198,6 +198,6 @@
       };
     };
 
-  angular.module('angular-autocomplete').
+  angular.module('angularjs-autocomplete').
     directive('autoCompleteDiv', autoCompleteDiv);
 })();

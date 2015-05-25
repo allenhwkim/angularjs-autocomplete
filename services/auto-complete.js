@@ -159,7 +159,7 @@
     return deferred.promise;
   };
 
-  angular.module('angular-autocomplete').
+  angular.module('angularjs-autocomplete').
     factory('AutoComplete', function(_$q_, _$http_) {
       $q = _$q_, $http = _$http_;
       return {

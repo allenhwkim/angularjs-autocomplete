@@ -2,9 +2,9 @@
 <html><head>
   <title>test</title>
   <script src="lib/angular.js"></script>
-  <script src="../build/angular-autocomplete.debug.js"></script>
+  <script src="../build/angularjs-autocomplete.debug.js"></script>
   <script id="javascript">
-  angular.module('myApp', ['angular-autocomplete']).controller('MyCtrl', function($scope) {
+  angular.module('myApp', ['angularjs-autocomplete']).controller('MyCtrl', function($scope) {
     $scope.source3 = [{key:1, text:'One'}, {key:2, text:'Two'}, {key:3, text:'Three'}, {key:4, text:'Four'}];
     $scope.callback = function(arg) {
       console.log('value selected by autocomplete: ', arg);

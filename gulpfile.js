@@ -17,13 +17,13 @@ gulp.task('build-js', function() {
     'directives/auto-complete.js',
     'directives/auto-complete-div.js',
     'services/*.js'])
-    .pipe(concat('angular-autocomplete.debug.js'))
+    .pipe(concat('angularjs-autocomplete.debug.js'))
     .pipe(gulp.dest('build'))
     .pipe(stripDebug())
-    .pipe(concat('angular-autocomplete.js'))
+    .pipe(concat('angularjs-autocomplete.js'))
     .pipe(gulp.dest('build'))
     .pipe(uglify())
-    .pipe(rename('angular-autocomplete.min.js'))
+    .pipe(rename('angularjs-autocomplete.min.js'))
     .pipe(gulp.dest('build'));
 });
 

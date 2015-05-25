@@ -3,9 +3,9 @@
   <head>
     <title>test</title>
     <script src="lib/angular.js"></script>
-    <script src="../build/angular-autocomplete.debug.js"></script>
+    <script src="../build/angularjs-autocomplete.debug.js"></script>
     <script>
-      angular.module('myApp', ['angular-autocomplete']).controller('MyCtrl', function($scope) {
+      angular.module('myApp', ['angularjs-autocomplete']).controller('MyCtrl', function($scope) {
         $scope.source1 = ["this", "is", "array", "of", "text"]; 
         $scope.source2 = [{id:1, value:'One'}, {id:2, value:'Two'}, {id:3, value:'Three'}, {id:4, value:'Four'}];
         $scope.callback = function(selected) {

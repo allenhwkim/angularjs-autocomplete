@@ -1,5 +1,5 @@
 {
-  "name": "angular-autocomplete",
+  "name": "angularjs-autocomplete",
   "version": "0.1.0",
   "description": "INPUT/SELECT Autocomplete from local or remote source",
   "main": "N/A",
@@ -11,7 +11,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "https://github.com/allenhwkim/angular-autocomplete.git"
+    "url": "https://github.com/allenhwkim/angularjs-autocomplete.git"
   },
   "keywords": [
     "select2",
@@ -22,9 +22,9 @@
   "author": "Allen Kim",
   "license": "MIT",
   "bugs": {
-    "url": "https://github.com/allenhwkim/angular-autocomplete/issues"
+    "url": "https://github.com/allenhwkim/angularjs-autocomplete/issues"
   },
-  "homepage": "https://github.com/allenhwkim/angular-autocomplete",
+  "homepage": "https://github.com/allenhwkim/angularjs-autocomplete",
   "devDependencies": {
     "gulp": "^3.8.11",
     "gulp-clean": "^0.3.1",

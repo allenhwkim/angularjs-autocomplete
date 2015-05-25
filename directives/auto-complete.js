@@ -134,8 +134,8 @@
     }
   }; // compileFunc
 
-  angular.module('angular-autocomplete',[]);
-  angular.module('angular-autocomplete').
+  angular.module('angularjs-autocomplete',[]);
+  angular.module('angularjs-autocomplete').
     directive('autoComplete', function() {
       return { compile: compileFunc };
     });

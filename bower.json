@@ -1,8 +1,8 @@
 {
-  "name": "angular-autocomplete",
+  "name": "angularjs-autocomplete",
   "version": "0.1.0",
-  "main": "./build/angular-autocomplete.min.js",
-  "homepage": "https://github.com/allenhwkim/angular-autocomplete",
+  "main": "./build/angularjs-autocomplete.min.js",
+  "homepage": "https://github.com/allenhwkim/angularjs-autocomplete",
   "authors": ["Allen Kim <allenhwkim@gmail.com>"],
   "description": "Single or Multi Autocomplete for INPUT and SELECT tag",
   "keywords": ['select', 'input', 'select2', 'autocomplete', 'remote'],

@@ -17,11 +17,11 @@ Features
 
 Examples
 --------
-  
-  * [Single Select](http://rawgit.com/allenhwkim/angular-autocomplete/master/test/autocomplete.single.html)
-  * [Multi Select](http://rawgit.com/allenhwkim/angular-autocomplete/master/test/autocomplete.multi.html)
-  * [Custom Design](http://rawgit.com/allenhwkim/angular-autocomplete/master/test/autocomplete.multi.custom.html)
-  * [Google Address Complete](http://rawgit.com/allenhwkim/angular-autocomplete/master/test/autocomplete.remote.html)
+
+  * [Single Select](http://rawgit.com/allenhwkim/angularjs-autocomplete/master/test/autocomplete.single.html)
+  * [Multi Select](http://rawgit.com/allenhwkim/angularjs-autocomplete/master/test/autocomplete.multi.html)
+  * [Custom Design](http://rawgit.com/allenhwkim/angularjs-autocomplete/master/test/autocomplete.multi.custom.html)
+  * [Google Address Complete](http://rawgit.com/allenhwkim/angularjs-autocomplete/master/test/autocomplete.remote.html)
 
 
 To Get Started
@@ -29,13 +29,13 @@ To Get Started
 
 For Bower users, 
 
-  `$ bower install angular-autocomplete`
+  `$ bower install angularjs-autocomplete`
 
-1. Include `angular-autocomplete.min.js`  
-    `<script src="http://rawgit.com/allenhwkim/angular-autocomplete.min.js"></script>`
+1. Include `angularjs-autocomplete.min.js`  
+    `<script src="http://rawgit.com/allenhwkim/angularjs-autocomplete.min.js"></script>`
 
 2. add it as a dependency  
-    `var myApp = angular.module('myApp', ['angular-autocomplete']);`
+    `var myApp = angular.module('myApp', ['angularjs-autocomplete']);`
 
 3. Use it  
 
@@ -72,8 +72,8 @@ Attributes
         };
 
   * **default-style**(optional) : true as default. For your own styling, set `default-style="false"` and provide your own css.  
-    The example of customized css style is found at [custom multiple select](https://rawgit.com/allenhwkim/angular-autocomplete/master/autocomplete.multi.custom.html).   
-    You can also find [default-style](https://rawgit.com/allenhwkim/angular-autocomplete/master/default-style.css) for starting point.
+    The example of customized css style is found at [custom multiple select](https://rawgit.com/allenhwkim/angularjs-autocomplete/master/autocomplete.multi.custom.html).   
+    You can also find [default-style](https://rawgit.com/allenhwkim/angularjs-autocomplete/master/default-style.css) for starting point.
 
   * **value-property**(optional): "id" as default. When you define an array of hashes as source, the key of hash for ng-model value.  
     e.g., 'key'
@@ -85,4 +85,4 @@ Attributes
 License
 =======
 
-  [MIT License](https://github.com/allenhwkim/angular-autocomplete/blob/master/LICENSE)
+  [MIT License](https://github.com/allenhwkim/angularjs-autocomplete/blob/master/LICENSE)
