@@ -13,7 +13,7 @@
     '}' + 
 
     'select ~ auto-complete-div.default-style input {'+
-    '  border-width: 3px 7px;'+
+    '  border-width: 3px 3px;'+
     '}' + 
 
     'auto-complete-div.default-style ul {'+

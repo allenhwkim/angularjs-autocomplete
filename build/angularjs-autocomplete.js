@@ -1,5 +1,6 @@
 (function(){
   'use strict';
+  var $compile;
 
   // return dasherized from  underscored/camelcased string
   var dasherize = function(string) {
@@ -39,18 +40,18 @@
     return acDiv;
   };
 
-  var compileFunc = function(tElement, tAttrs)  {
-    tElement[0].style.position = 'relative';
+  var linkFunc = function(scope, element, attrs)  {
+    element[0].style.position = 'relative';
 
-    var controlEl = tElement[0].querySelector('input, select');
+    var controlEl = element[0].querySelector('input, select');
 
-    tAttrs.valueProperty = tAttrs.valueProperty || 'id';
-    tAttrs.displayProperty = tAttrs.displayProperty || 'value';
-    tAttrs.ngModel = controlEl.getAttribute('ng-model');
+    attrs.valueProperty = attrs.valueProperty || 'id';
+    attrs.displayProperty = attrs.displayProperty || 'value';
+    attrs.ngModel = controlEl.getAttribute('ng-model');
 
     // 1. build <auto-complete-div>
-    var acDiv = buildACDiv(controlEl, tAttrs);
-    tElement[0].appendChild(acDiv);
+    var acDiv = buildACDiv(controlEl, attrs);
+    element[0].appendChild(acDiv);
 
     // 2. respond to click by hiding option tags
     controlEl.addEventListener('mouseover', function() {
@@ -71,13 +72,16 @@
       }
     });
 
+    $compile(element.contents())(scope);
 
-  }; // compileFunc
+  }; // linkFunc
 
   angular.module('angularjs-autocomplete',[]);
   angular.module('angularjs-autocomplete').
-    directive('autoComplete', function() {
-      return { compile: compileFunc };
+    directive('autoComplete', function(_$compile_) {
+      $compile = _$compile_;
+      return { 
+        link: linkFunc };
     });
 })();
 
@@ -127,7 +131,7 @@
       addListElements(scope, filteredData);
     } else { // remote source
       ulEl.style.display = 'none';
-      if (inputEl.value.length >= scope.minChars) {
+      if (inputEl.value.length >= (scope.minChars||0)) {
         ulEl.style.display = 'block';
         showLoading(ulEl, true);
         AutoComplete.getRemoteData(
@@ -301,7 +305,7 @@
     '}' + 
 
     'select ~ auto-complete-div.default-style input {'+
-    '  border-width: 3px 7px;'+
+    '  border-width: 3px 3px;'+
     '}' + 
 
     'auto-complete-div.default-style ul {'+

@@ -44,7 +44,7 @@
       addListElements(scope, filteredData);
     } else { // remote source
       ulEl.style.display = 'none';
-      if (inputEl.value.length >= scope.minChars) {
+      if (inputEl.value.length >= (scope.minChars||0)) {
         ulEl.style.display = 'block';
         showLoading(ulEl, true);
         AutoComplete.getRemoteData(
