@@ -62,6 +62,7 @@
   var applyDefaultStyle = function(controlEl, acDiv) {
     var controlBCR = controlEl.getBoundingClientRect();
     var targetStyle;
+
     // set width/heigth of multiple select box
     if (controlEl && controlEl.multiple) {
       targetStyle = acDiv.parentElement.style;
@@ -69,11 +70,13 @@
       targetStyle.width = controlBCR.width + 'px';
       targetStyle.minHeight = controlBCR.height + 'px';
     }
+
     // set width/height of input box
     else { 
       targetStyle = acDiv.querySelector('input').style;
       targetStyle.height = controlBCR.height + 'px';
     }
+
   };
 
   var buildMultiACDiv = function(controlEl, attrs) {
@@ -100,6 +103,9 @@
   };
 
   var compileFunc = function(tElement, tAttrs)  {
+    var wrapperEl = tElement.wrap('<div>');
+    wrapperEl.style.position = 'relative';
+
     var controlEl = tElement[0];
     tAttrs.valueProperty = tAttrs.valueProperty || 'id';
     tAttrs.displayProperty = tAttrs.displayProperty || 'value';
@@ -117,13 +123,16 @@
     var acDiv = buildACDiv(controlEl, tAttrs);
     if (controlEl.tagName == "SELECT" && 
       tAttrs.ngModel && tAttrs.multiple) { // for multiple select
+
       var multiACDiv = buildMultiACDiv(controlEl, tAttrs);
       acDiv.setAttribute("multiple","");
       multiACDiv.appendChild(acDiv);
       controlEl.parentNode.insertBefore(multiACDiv, controlEl.nextSibling);
       (tAttrs.defaultStyle != 'false') && applyDefaultStyle(controlEl, acDiv);
       controlEl.style.display = 'none';
+
     } else { //for input and single select
+
       acDiv.style.display = 'none';
       controlEl.parentNode.insertBefore(acDiv, controlEl.nextSibling);
       (tAttrs.defaultStyle != 'false') && applyDefaultStyle(controlEl, acDiv);
@@ -131,6 +140,7 @@
         positionACDiv(controlEl, acDiv);
         acDiv.firstChild.focus();
       });
+
     }
   }; // compileFunc
 

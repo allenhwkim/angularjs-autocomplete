@@ -20,6 +20,7 @@
         el[scope.displayProperty] : el;
       liEl.innerHTML = displayText;
       liEl.object = el;
+      liEl.objectValue = el[scope.valueProperty];
       ulEl.appendChild(liEl);
     });
   };
@@ -64,12 +65,10 @@
   };
 
   var focusInputEl = function(scope) {
-    if (!scope.ngDisabled) {
-      scope.ulEl.style.display = 'block'; 
-      scope.inputEl.focus();
-      scope.inputEl.value = '';
-      loadList(scope);
-    }
+    scope.ulEl.style.display = 'block'; 
+    scope.inputEl.focus();
+    scope.inputEl.value = '';
+    loadList(scope);
   };
 
   var inputElKeyHandler = function(scope, keyCode) {
@@ -133,12 +132,15 @@
       hideAutoselect(scope);
       $timeout(function() {
         if (attrs.ngModel) {
-          if (controlEl && controlEl.tagName == 'INPUT') {
+          if (controlEl.tagName == 'INPUT') {
             scope.ngModel = liEl.innerHTML ;
+          } else if (controlEl.tagName == 'SELECT') {
+            var optionValue = liEl.objectValue || liEl.innerHTML;
+            scope.ngModel = optionValue;
+            controlEl.firstChild.innerText =  liEl.innerHTML;
+            controlEl.valueObject = liEl.object;
           } else if (isMultiple) {
             scope.ngModel.push(liEl.object);
-          } else {
-            scope.ngModel = liEl.object;
           }
         }
         inputEl.value = '';
@@ -185,7 +187,6 @@
         restrict: 'E',
         scope: {
           ngModel : '=', 
-          ngDisabled : '=', 
           source : '=', 
           minChars : '=', 
           defaultStyle : '=', 

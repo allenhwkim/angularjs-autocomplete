@@ -33,50 +33,62 @@
       attrs[attr] && acDiv.setAttribute(dasherize(attr), attrs[attr]);
     });
     acDiv.style.position = 'absolute';
-    acDiv.style.top = 0;
-    acDiv.style.left = 0;
     acDiv.style.display = 'none';
     return acDiv;
+  };
+
+  var buildMultiACDiv = function(controlEl, attrs) {
+    var deleteLink = document.createElement('button');
+    deleteLink.innerHTML = 'x';
+    deleteLink.className += ' delete';
+    deleteLink.setAttribute('ng-click', attrs.ngModel+'.splice($index, 1)');
+
+    var ngRepeatDiv = document.createElement('span');
+    ngRepeatDiv.className += ' auto-complete-repeat';
+    ngRepeatDiv.setAttribute('ng-repeat', 
+      'obj in '+attrs.ngModel+' track by $index');
+    ngRepeatDiv.innerHTML = '{{obj["'+attrs.displayProperty+'"] || obj}}';
+    ngRepeatDiv.appendChild(deleteLink);
+
+    var multiACDiv = document.createElement('div');
+    multiACDiv.className = 'auto-complete-div-multi-wrapper';
+    multiACDiv.style.backgroundColor = '#ddd';
+    multiACDiv.appendChild(ngRepeatDiv);
+    
+    return multiACDiv;
   };
 
   var compileFunc = function(tElement, tAttrs)  {
     tElement[0].style.position = 'relative';
 
-    var controlEl = tElement[0].querySelector('input, select');
+    var controlEl = tElement[0].querySelector('select');
+    controlEl.style.display = 'none';
+    controlEl.multiple = true;
 
     tAttrs.valueProperty = tAttrs.valueProperty || 'id';
     tAttrs.displayProperty = tAttrs.displayProperty || 'value';
     tAttrs.ngModel = controlEl.getAttribute('ng-model');
 
     // 1. build <auto-complete-div>
+    var multiACDiv = buildMultiACDiv(controlEl, tAttrs);
     var acDiv = buildACDiv(controlEl, tAttrs);
-    tElement[0].appendChild(acDiv);
+    multiACDiv.appendChild(acDiv);
+    tElement[0].appendChild(multiACDiv);
 
-    // 2. respond to click by hiding option tags
-    controlEl.addEventListener('mouseover', function() {
-      controlEl.firstChild && (controlEl.firstChild.style.display = 'none');
-    });
-    controlEl.addEventListener('mouseout', function() {
-      controlEl.firstChild && (controlEl.firstChild.style.display = '');
-    });
-    controlEl.addEventListener('click', function() {
+    // 2. respond to click
+    tElement[0].addEventListener('click', function() {
       if (!controlEl.disabled) {
-        acDiv.style.display = 'block';
-        var controlBCR = controlEl.getBoundingClientRect();
+        acDiv.style.display = 'inline-block';
         var acDivInput = acDiv.querySelector('input');
-        acDiv.style.width = controlBCR.width + 'px';
-        acDivInput.style.width = (controlBCR.width - 30) + 'px';
-        acDivInput.style.height = controlBCR.height + 'px';
+        acDivInput.setAttribute('size', 2);
         acDivInput.focus();
       }
     });
 
-
   }; // compileFunc
 
-  angular.module('angularjs-autocomplete',[]);
   angular.module('angularjs-autocomplete').
-    directive('autoComplete', function() {
+    directive('autoCompleteMulti', function() {
       return { compile: compileFunc };
     });
 })();

@@ -3,7 +3,10 @@
   <head>
     <title>test</title>
     <script src="lib/angular.js"></script>
-    <script src="../build/angularjs-autocomplete.debug.js"></script>
+    <script src="../directives/auto-complete.js"></script>
+    <script src="../directives/auto-complete-multi.js"></script>
+    <script src="../directives/auto-complete-div.js"></script>
+    <script src="../services/auto-complete.js"></script>
     <script>
       angular.module('myApp', ['angularjs-autocomplete']).controller('MyCtrl', function($scope) {
         $scope.source1 = ["this", "is", "array", "of", "text"]; 
@@ -17,7 +20,7 @@
       });
       var printHTML = function(selector) {
         document.write('<pre>'+
-          document.querySelector(selector).outerHTML.replace(/</g,'\n&lt;').replace(/[ ]/g,"\n  ") +
+          document.querySelector(selector).outerHTML.replace(/</g,'\n&lt;').replace(/[ ]([a-z])/g,"\n  $1") +
         '</pre>')
       };
     </script>
@@ -36,17 +39,14 @@
     </ul>
     <br/>
     <br/>
-    <select id='sp' multiple
-      ng-disabled="disabled"
-      ng-model="foo" 
-      auto-complete
-      source="source"
-      value-changed="callback(value)"></select>
+    <div auto-complete-multi source="source" value-changed="callback(value)"> 
+      <select id='sp' ng-disabled="disabled" ng-model="foo"></select>
+    </div>
     <input type="checkbox" ng-model="disabled"> Disable
     <script>printHTML("select")</script>
     <br/>$scope.foo:  <b>{{ foo }}</b>
     <br/>$scope.source: {{ source }}
     <br/>$scope.selected = {{ selected }}
-
   </body>
+
 </html>
