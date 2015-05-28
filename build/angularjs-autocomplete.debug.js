@@ -190,12 +190,12 @@
   };
 
   var linkFunc = function(scope, element, attrs) {
-    var containerEl = element[0];
-    var controlEl = element[0].controlEl;
-    var inputEl, ulEl, isMultiple;
+    var inputEl, ulEl, isMultiple, containerEl, controlEl;
+    containerEl = element[0];
+    controlEl = element[0].controlEl;
     controlEl && (controlEl.readOnly = true);
     scope.containerEl = containerEl;
-    scope.isMultiple = isMultiple = containerEl.hasAttribute('multiple');
+    scope.isMultiple = isMultiple = controlEl.multiple;
     scope.inputEl = inputEl = element[0].querySelector('input');
     scope.ulEl = ulEl = element[0].querySelector('ul');
 
@@ -217,14 +217,14 @@
         if (attrs.ngModel) {
           if (controlEl.tagName == 'INPUT') {
             scope.ngModel = liEl.innerHTML ;
+          } else if (isMultiple) {
+            scope.ngModel.push(liEl.object);
           } else if (controlEl.tagName == 'SELECT') {
             var optionValue = liEl.objectValue || liEl.innerHTML;
             scope.ngModel = optionValue;
             controlEl.firstChild.innerText =  liEl.innerHTML;
             controlEl.valueObject = liEl.object;
-          } else if (isMultiple) {
-            scope.ngModel.push(liEl.object);
-          }
+          } 
         }
         inputEl.value = '';
         scope.valueChanged({value: liEl.object}); //user scope
@@ -354,24 +354,27 @@
     '  display: none;' +
     '}' +
 
-    'auto-complete-div[multiple].default-style {'+
-    '  position: relative;' +
-    '  display: inline-block;' +
-    '}' +
+    '.auto-complete-div-multi-wrapper auto-complete-div.default-style {'+
+    '  position: relative;'+
+    '  display: inline-block;'+
+    '  margin: 3px;'+
+    '  padding: 3px;'+
+    '}'+
 
-    'auto-complete-div[multiple].default-style input {'+
-    '  background-color: transparent;'+
-    '  border: none;' +
-    '  border-radius: 0;' +
-    '}' +
+    '.auto-complete-div-multi-wrapper auto-complete-div.default-style input {'+
+    '  background: transparent;'+
+    '  border-radius: 0;'+
+    '  border: none;'+
+    '}'+
 
-    'auto-complete-div[multiple].default-style ul {'+
+    '.auto-complete-div-multi-wrapper auto-complete-div.default-style ul {'+
     '  position: absolute;'+
     '  top: 1.5em;'+
     '  left: 0;'+
-    '  width: auto;' +
+    '  width: auto;'+
     '  min-width: 10em;'+
-    '}' +
+    '}'+
+
     '';
 
   // return dasherized from  underscored/camelcased string

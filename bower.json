@@ -6,5 +6,6 @@
   "authors": ["Allen Kim <allenhwkim@gmail.com>"],
   "description": "Single or Multi Autocomplete for INPUT and SELECT tag",
   "keywords": ["select", "input", "select2", "autocomplete", "remote"],
+  "ignore" : ["directives","gulpfile.js", "node_modules", "services", "test"],
   "license": "MIT"
 }
