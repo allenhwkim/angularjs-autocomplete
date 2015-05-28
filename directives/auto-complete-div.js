@@ -107,12 +107,12 @@
   };
 
   var linkFunc = function(scope, element, attrs) {
-    var containerEl = element[0];
-    var controlEl = element[0].controlEl;
-    var inputEl, ulEl, isMultiple;
+    var inputEl, ulEl, isMultiple, containerEl, controlEl;
+    containerEl = element[0];
+    controlEl = element[0].controlEl;
     controlEl && (controlEl.readOnly = true);
     scope.containerEl = containerEl;
-    scope.isMultiple = isMultiple = containerEl.hasAttribute('multiple');
+    scope.isMultiple = isMultiple = controlEl.multiple;
     scope.inputEl = inputEl = element[0].querySelector('input');
     scope.ulEl = ulEl = element[0].querySelector('ul');
 
@@ -134,14 +134,14 @@
         if (attrs.ngModel) {
           if (controlEl.tagName == 'INPUT') {
             scope.ngModel = liEl.innerHTML ;
+          } else if (isMultiple) {
+            scope.ngModel.push(liEl.object);
           } else if (controlEl.tagName == 'SELECT') {
             var optionValue = liEl.objectValue || liEl.innerHTML;
             scope.ngModel = optionValue;
             controlEl.firstChild.innerText =  liEl.innerHTML;
             controlEl.valueObject = liEl.object;
-          } else if (isMultiple) {
-            scope.ngModel.push(liEl.object);
-          }
+          } 
         }
         inputEl.value = '';
         scope.valueChanged({value: liEl.object}); //user scope

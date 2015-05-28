@@ -55,12 +55,12 @@ auto-complete-div.default-style ul li:hover {
 } 
 
 div .auto-complete-repeat {
-  display: inline-block;
-  padding: 3px; 
   background : #fff;
-  margin: 3px;
-  border: 1px solid #ccc;
   border-radius: 5px;
+  border: 1px solid #ccc;
+  display: inline-block;
+  margin: 3px;
+  padding: 3px; 
 }
 
 div .auto-complete-repeat .delete {
@@ -74,18 +74,20 @@ div .auto-complete-repeat .delete[disabled] {
   display: none;
 }
 
-auto-complete-div[multiple].default-style {
+.auto-complete-div-multi-wrapper auto-complete-div.default-style {
   position: relative;
   display: inline-block;
 }
 
-auto-complete-div[multiple].default-style input {
-  background-color: transparent;
-  border: none;
+.auto-complete-div-multi-wrapper auto-complete-div.default-style input {
+  background: transparent;
   border-radius: 0;
+  border: none;
+  margin: 3px;
+  padding: 3px;
 }
 
-auto-complete-div[multiple].default-style ul {
+.auto-complete-div-multi-wrapper auto-complete-div.default-style ul {
   position: absolute;
   top: 1.5em;
   left: 0;

@@ -66,24 +66,27 @@
     '  display: none;' +
     '}' +
 
-    'auto-complete-div[multiple].default-style {'+
-    '  position: relative;' +
-    '  display: inline-block;' +
-    '}' +
+    '.auto-complete-div-multi-wrapper auto-complete-div.default-style {'+
+    '  position: relative;'+
+    '  display: inline-block;'+
+    '  margin: 3px;'+
+    '  padding: 3px;'+
+    '}'+
 
-    'auto-complete-div[multiple].default-style input {'+
-    '  background-color: transparent;'+
-    '  border: none;' +
-    '  border-radius: 0;' +
-    '}' +
+    '.auto-complete-div-multi-wrapper auto-complete-div.default-style input {'+
+    '  background: transparent;'+
+    '  border-radius: 0;'+
+    '  border: none;'+
+    '}'+
 
-    'auto-complete-div[multiple].default-style ul {'+
+    '.auto-complete-div-multi-wrapper auto-complete-div.default-style ul {'+
     '  position: absolute;'+
     '  top: 1.5em;'+
     '  left: 0;'+
-    '  width: auto;' +
+    '  width: auto;'+
     '  min-width: 10em;'+
-    '}' +
+    '}'+
+
     '';
 
   // return dasherized from  underscored/camelcased string

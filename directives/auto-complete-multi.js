@@ -29,8 +29,11 @@
     var ulEl = document.createElement('ul');
     acDiv.appendChild(ulEl);
 
-    autoCompleteAttrs.map(function(attr) {
-      attrs[attr] && acDiv.setAttribute(dasherize(attr), attrs[attr]);
+    autoCompleteAttrs.map(function(acAttr) {
+      if (attrs[acAttr]) {
+        var attrValue = attrs[acAttr];
+        acDiv.setAttribute(dasherize(acAttr), attrValue);
+      }
     });
     acDiv.style.position = 'absolute';
     acDiv.style.display = 'none';
@@ -41,7 +44,7 @@
     var deleteLink = document.createElement('button');
     deleteLink.innerHTML = 'x';
     deleteLink.className += ' delete';
-    deleteLink.setAttribute('ng-click', attrs.ngModel+'.splice($index, 1)');
+    deleteLink.setAttribute('ng-click', attrs.ngModel+'.splice($index, 1); $event.stopBubbling()');
 
     var ngRepeatDiv = document.createElement('span');
     ngRepeatDiv.className += ' auto-complete-repeat';
