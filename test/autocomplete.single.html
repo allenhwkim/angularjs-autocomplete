@@ -55,8 +55,9 @@
 
     <br/>
     <br/>
-    <br ng-init="bar=''" />
-    <div auto-complete id="sh" source="source" value-changed="callback(value)">
+    <br ng-init="bar=1" />
+    <div auto-complete id="sh" source="source" value-changed="callback(value)" 
+      placeholder="Select Bar">
       <select id='sh' ng-model="bar" ng-disabled="disabled"></select>
     </div>
     <input type="checkbox" ng-model="disabled"> Disable 

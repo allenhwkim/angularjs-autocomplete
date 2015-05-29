@@ -1,6 +1,6 @@
 (function(){
   'use strict';
-  var $compile;
+  var $compile, $parse;
 
   // return dasherized from  underscored/camelcased string
   var dasherize = function(string) {
@@ -49,16 +49,28 @@
     attrs.displayProperty = attrs.displayProperty || 'value';
     attrs.ngModel = controlEl.getAttribute('ng-model');
 
+    //0. if select tag, make placeholder and initial value visible
+    if (controlEl.tagName == 'SELECT') {
+      var optionEl = document.createElement('option');
+      optionEl.setAttribute('value', $parse(attrs.ngModel)(scope) || '');
+      optionEl.innerHTML = attrs.placeholder;
+      controlEl.appendChild(optionEl);
+    }
+
     // 1. build <auto-complete-div>
     var acDiv = buildACDiv(controlEl, attrs);
     element[0].appendChild(acDiv);
 
     // 2. respond to click by hiding option tags
     controlEl.addEventListener('mouseover', function() {
-      controlEl.firstChild && (controlEl.firstChild.style.display = 'none');
+      for (var i=0; i<controlEl.children.length; i++) {
+        controlEl.children[i].style.display = 'none';
+      }
     });
     controlEl.addEventListener('mouseout', function() {
-      controlEl.firstChild && (controlEl.firstChild.style.display = '');
+      for (var i=0; i<controlEl.children.length; i++) {
+        controlEl.children[i].style.display = '';
+      }
     });
     controlEl.addEventListener('click', function() {
       if (!controlEl.disabled) {
@@ -78,8 +90,8 @@
 
   angular.module('angularjs-autocomplete',[]);
   angular.module('angularjs-autocomplete').
-    directive('autoComplete', function(_$compile_) {
-      $compile = _$compile_;
+    directive('autoComplete', function(_$compile_, _$parse_) {
+      $compile = _$compile_, $parse = _$parse_;
       return { 
         link: linkFunc };
     });

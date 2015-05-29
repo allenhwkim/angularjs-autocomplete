@@ -139,8 +139,10 @@
           } else if (controlEl.tagName == 'SELECT') {
             var optionValue = liEl.objectValue || liEl.innerHTML;
             scope.ngModel = optionValue;
-            controlEl.firstChild.innerText =  liEl.innerHTML;
             controlEl.valueObject = liEl.object;
+            $timeout(function(){
+              controlEl.firstChild.innerHTML =  liEl.innerHTML;
+            });
           } 
         }
         inputEl.value = '';
