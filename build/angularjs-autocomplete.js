@@ -12,6 +12,7 @@
 
   // accepted attributes
   var autoCompleteAttrs = [
+    'placeholder',
     'ngModel', 'valueChanged', 'source', 'pathToData', 'minChars',
     'defaultStyle', 'valueProperty', 'displayProperty'
   ];
@@ -49,12 +50,23 @@
     attrs.displayProperty = attrs.displayProperty || 'value';
     attrs.ngModel = controlEl.getAttribute('ng-model');
 
-    //0. if select tag, make placeholder and initial value visible
     if (controlEl.tagName == 'SELECT') {
-      var optionEl = document.createElement('option');
-      optionEl.setAttribute('value', $parse(attrs.ngModel)(scope) || '');
-      optionEl.innerHTML = attrs.placeholder;
-      controlEl.appendChild(optionEl);
+      var controlBCR = controlEl.getBoundingClientRect();
+      var placeholderEl = document.createElement('div');
+      placeholderEl.className = 'select-placeholder';
+      placeholderEl.style.lineHeight = controlBCR.height + 'px';
+      controlEl.placeholderEl = placeholderEl;
+      element[0].appendChild(placeholderEl);
+      // if ngModel value is undefined, show text with placeholder
+      if ($parse(attrs.ngModel)(scope) === undefined) { 
+        placeholderEl.innerHTML = attrs.placeholder;
+      } 
+      // if noModel has value, observe initSelectText and set text
+      else {
+        attrs.$observe('initSelectText', function(val) {
+          placeholderEl.innerHTML = val;
+        });
+      }
     }
 
     // 1. build <auto-complete-div>
@@ -113,14 +125,21 @@
   var addListElements = function(scope, data) {
     var inputEl = scope.inputEl, ulEl = scope.ulEl;
     var displayText;
-    data.forEach(function(el) {
+    var getLiEl = function(modelValue, viewValue, el) {
       var liEl = document.createElement('li');
-      var displayText = typeof el == 'object' ?
-        el[scope.displayProperty] : el;
-      liEl.innerHTML = displayText;
-      liEl.object = el;
-      liEl.objectValue = el[scope.valueProperty];
-      ulEl.appendChild(liEl);
+      liEl.innerHTML = viewValue;
+      liEl.model = el;
+      liEl.modelValue = modelValue;
+      liEl.viewValue = viewValue;
+      return liEl;
+    };
+    if (scope.placeholder && scope.controlEl.tagName == 'SELECT') {
+      ulEl.appendChild(getLiEl(undefined, scope.placeholder));
+    }
+    data.forEach(function(el) {
+      var viewValue = typeof el == 'object' ? el[scope.displayProperty] : el;
+      var modelValue = typeof el == 'object' ? el[scope.valueProperty] : el;
+      ulEl.appendChild(getLiEl(modelValue, viewValue, el));
     });
   };
 
@@ -209,11 +228,13 @@
     var inputEl, ulEl, isMultiple, containerEl, controlEl;
     containerEl = element[0];
     controlEl = element[0].controlEl;
-    controlEl && (controlEl.readOnly = true);
     scope.containerEl = containerEl;
+    scope.controlEl   = controlEl;
     scope.isMultiple = isMultiple = controlEl.multiple;
     scope.inputEl = inputEl = element[0].querySelector('input');
     scope.ulEl = ulEl = element[0].querySelector('ul');
+
+    controlEl && (controlEl.readOnly = true);
 
     // add default class css to head tag
     if (scope.defaultStyle !== false) {
@@ -234,18 +255,14 @@
           if (controlEl.tagName == 'INPUT') {
             scope.ngModel = liEl.innerHTML ;
           } else if (isMultiple) {
-            scope.ngModel.push(liEl.object);
+            scope.ngModel.push(liEl.model);
           } else if (controlEl.tagName == 'SELECT') {
-            var optionValue = liEl.objectValue || liEl.innerHTML;
-            scope.ngModel = optionValue;
-            controlEl.valueObject = liEl.object;
-            $timeout(function(){
-              controlEl.firstChild.innerHTML =  liEl.innerHTML;
-            });
+            scope.ngModel = liEl.modelValue;
+            controlEl.placeholderEl.innerHTML = liEl.viewValue;
           } 
         }
         inputEl.value = '';
-        scope.valueChanged({value: liEl.object}); //user scope
+        scope.valueChanged({value: liEl.model}); //user scope
       });
     };
 
@@ -294,6 +311,7 @@
           pathToData : '@', 
           valueProperty: '@',
           displayProperty: '@',
+          placeholder: '@',
           valueChanged : '&'
         },
         link: linkFunc 
@@ -309,6 +327,14 @@
   var $q, $http;
 
   var defaultStyle = 
+    'div[auto-complete] select ~ div.select-placeholder {'+
+    '  position: absolute; '+
+    '  padding-left: 4px;'+
+    '  top: 0;'+
+    '  left: 0;'+
+    '  pointer-events: none;'+
+    '}' + 
+
     'auto-complete-div.default-style input {'+
     '  outline: none; '+
     '  border: 2px solid transparent;'+

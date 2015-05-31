@@ -3,6 +3,14 @@
   var $q, $http;
 
   var defaultStyle = 
+    'div[auto-complete] select ~ div.select-placeholder {'+
+    '  position: absolute; '+
+    '  padding-left: 4px;'+
+    '  top: 0;'+
+    '  left: 0;'+
+    '  pointer-events: none;'+
+    '}' + 
+
     'auto-complete-div.default-style input {'+
     '  outline: none; '+
     '  border: 2px solid transparent;'+

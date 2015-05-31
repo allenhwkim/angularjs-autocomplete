@@ -12,6 +12,7 @@
 
   // accepted attributes
   var autoCompleteAttrs = [
+    'placeholder',
     'ngModel', 'valueChanged', 'source', 'pathToData', 'minChars',
     'defaultStyle', 'valueProperty', 'displayProperty'
   ];
@@ -49,12 +50,23 @@
     attrs.displayProperty = attrs.displayProperty || 'value';
     attrs.ngModel = controlEl.getAttribute('ng-model');
 
-    //0. if select tag, make placeholder and initial value visible
     if (controlEl.tagName == 'SELECT') {
-      var optionEl = document.createElement('option');
-      optionEl.setAttribute('value', $parse(attrs.ngModel)(scope) || '');
-      optionEl.innerHTML = attrs.placeholder;
-      controlEl.appendChild(optionEl);
+      var controlBCR = controlEl.getBoundingClientRect();
+      var placeholderEl = document.createElement('div');
+      placeholderEl.className = 'select-placeholder';
+      placeholderEl.style.lineHeight = controlBCR.height + 'px';
+      controlEl.placeholderEl = placeholderEl;
+      element[0].appendChild(placeholderEl);
+      // if ngModel value is undefined, show text with placeholder
+      if ($parse(attrs.ngModel)(scope) === undefined) { 
+        placeholderEl.innerHTML = attrs.placeholder;
+      } 
+      // if noModel has value, observe initSelectText and set text
+      else {
+        attrs.$observe('initSelectText', function(val) {
+          placeholderEl.innerHTML = val;
+        });
+      }
     }
 
     // 1. build <auto-complete-div>
