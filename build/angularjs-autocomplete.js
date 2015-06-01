@@ -64,7 +64,7 @@
       // if noModel has value, observe initSelectText and set text
       else {
         attrs.$observe('initSelectText', function(val) {
-          placeholderEl.innerHTML = val;
+          val && (placeholderEl.innerHTML = val);
         });
       }
     }

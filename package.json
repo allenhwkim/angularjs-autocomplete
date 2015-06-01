@@ -1,6 +1,6 @@
 {
   "name": "angularjs-autocomplete",
-  "version": "0.2.5",
+  "version": "0.2.6",
   "description": "INPUT/SELECT Autocomplete from local or remote source",
   "main": "N/A",
   "directories": {
