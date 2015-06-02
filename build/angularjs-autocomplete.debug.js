@@ -329,7 +329,7 @@
   var defaultStyle = 
     'div[auto-complete] select ~ div.select-placeholder {'+
     '  position: absolute; '+
-    '  padding-left: 4px;'+
+    '  padding-left: 12px;'+
     '  top: 0;'+
     '  left: 0;'+
     '  pointer-events: none;'+
