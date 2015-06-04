@@ -133,7 +133,9 @@
       liEl.viewValue = viewValue;
       return liEl;
     };
-    if (scope.placeholder && scope.controlEl.tagName == 'SELECT') {
+    if (scope.placeholder &&
+        !scope.isMultiple &&
+        scope.controlEl.tagName == 'SELECT') {
       ulEl.appendChild(getLiEl(undefined, scope.placeholder));
     }
     data.forEach(function(el) {
@@ -152,6 +154,7 @@
   })();
 
   var loadList = function(scope) {
+    void 0;
     var inputEl = scope.inputEl, ulEl = scope.ulEl;
     while(ulEl.firstChild) { 
       ulEl.removeChild(ulEl.firstChild);
@@ -186,6 +189,7 @@
     scope.ulEl.style.display = 'block'; 
     scope.inputEl.focus();
     scope.inputEl.value = '';
+    void 0;
     loadList(scope);
   };
 
@@ -244,7 +248,7 @@
 
     isMultiple && 
       inputEl.parentNode.parentNode.addEventListener('click', function() {
-        focusInputEl(scope);
+        !controlEl.disabled && focusInputEl(scope);
       });
 
     scope.select = function(liEl) {
@@ -267,7 +271,7 @@
     };
 
     inputEl.addEventListener('focus', function(evt) {
-      focusInputEl(scope);
+      !controlEl.disabled && focusInputEl(scope);
     }); 
 
     inputEl.addEventListener('blur', function() {
@@ -286,6 +290,7 @@
     inputEl.addEventListener('input', function() {
       var delayMs = scope.source.constructor.name == 'Array' ? 10 : 500;
       delay(function() { //executing after user stopped typing
+        void 0;
         loadList(scope);
       }, delayMs);
 
@@ -397,6 +402,11 @@
     'div .auto-complete-repeat .delete[disabled] {'+
     '  display: none;' +
     '}' +
+
+    '.auto-complete-div-multi-wrapper {'+
+    '  background-color: #ddd;'+
+    '  min-height: 2em;'+
+    '}'+
 
     '.auto-complete-div-multi-wrapper auto-complete-div.default-style {'+
     '  position: relative;'+
