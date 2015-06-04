@@ -46,7 +46,7 @@
     var deleteLink = document.createElement('button');
     deleteLink.innerHTML = 'x';
     deleteLink.className += ' delete';
-    deleteLink.setAttribute('ng-click', attrs.ngModel+'.splice($index, 1); $event.stopBubbling()');
+    deleteLink.setAttribute('ng-click', attrs.ngModel+'.splice($index, 1); $event.stopPropagation()');
 
     var ngRepeatDiv = document.createElement('span');
     ngRepeatDiv.className += ' auto-complete-repeat';
