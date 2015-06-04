@@ -22,7 +22,9 @@
       liEl.viewValue = viewValue;
       return liEl;
     };
-    if (scope.placeholder && scope.controlEl.tagName == 'SELECT') {
+    if (scope.placeholder &&
+        !scope.isMultiple &&
+        scope.controlEl.tagName == 'SELECT') {
       ulEl.appendChild(getLiEl(undefined, scope.placeholder));
     }
     data.forEach(function(el) {
@@ -41,6 +43,7 @@
   })();
 
   var loadList = function(scope) {
+    console.log(111111111111);
     var inputEl = scope.inputEl, ulEl = scope.ulEl;
     while(ulEl.firstChild) { 
       ulEl.removeChild(ulEl.firstChild);
@@ -75,6 +78,7 @@
     scope.ulEl.style.display = 'block'; 
     scope.inputEl.focus();
     scope.inputEl.value = '';
+    console.log(2222222222);
     loadList(scope);
   };
 
@@ -133,7 +137,7 @@
 
     isMultiple && 
       inputEl.parentNode.parentNode.addEventListener('click', function() {
-        focusInputEl(scope);
+        !controlEl.disabled && focusInputEl(scope);
       });
 
     scope.select = function(liEl) {
@@ -156,7 +160,7 @@
     };
 
     inputEl.addEventListener('focus', function(evt) {
-      focusInputEl(scope);
+      !controlEl.disabled && focusInputEl(scope);
     }); 
 
     inputEl.addEventListener('blur', function() {
@@ -175,6 +179,7 @@
     inputEl.addEventListener('input', function() {
       var delayMs = scope.source.constructor.name == 'Array' ? 10 : 500;
       delay(function() { //executing after user stopped typing
+        console.log(33333333333);
         loadList(scope);
       }, delayMs);
 

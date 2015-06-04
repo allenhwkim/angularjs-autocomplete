@@ -11,6 +11,7 @@
 
   // accepted attributes
   var autoCompleteAttrs = [
+    'placeholder',
     'ngModel', 'valueChanged', 'source', 'pathToData', 'minChars',
     'defaultStyle', 'valueProperty', 'displayProperty'
   ];
@@ -22,6 +23,7 @@
     acDiv.controlEl = controlEl;
 
     var inputEl = document.createElement('input');
+    inputEl.setAttribute('placeholder', attrs.placeholder);
     attrs.ngDisabled && 
       inputEl.setAttribute('ng-disabled', attrs.ngDisabled);
     acDiv.appendChild(inputEl);
@@ -36,7 +38,7 @@
       }
     });
     acDiv.style.position = 'absolute';
-    acDiv.style.display = 'none';
+    //acDiv.style.display = 'none';
     return acDiv;
   };
 
@@ -55,7 +57,6 @@
 
     var multiACDiv = document.createElement('div');
     multiACDiv.className = 'auto-complete-div-multi-wrapper';
-    multiACDiv.style.backgroundColor = '#ddd';
     multiACDiv.appendChild(ngRepeatDiv);
     
     return multiACDiv;
@@ -80,10 +81,10 @@
 
     // 2. respond to click
     tElement[0].addEventListener('click', function() {
+      var acDivInput = acDiv.querySelector('input');
+      acDivInput.disabled = controlEl.disabled;
       if (!controlEl.disabled) {
         acDiv.style.display = 'inline-block';
-        var acDivInput = acDiv.querySelector('input');
-        acDivInput.setAttribute('size', 2);
         acDivInput.focus();
       }
     });

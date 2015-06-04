@@ -39,7 +39,10 @@
     </ul>
     <br/>
     <br/>
-    <div auto-complete-multi source="source" value-changed="callback(value)"> 
+    <div auto-complete-multi 
+      placeholder="Select One"
+      source="source" 
+      value-changed="callback(value)"> 
       <select id='sp' ng-disabled="disabled" ng-model="foo"></select>
     </div>
     <input type="checkbox" ng-model="disabled"> Disable

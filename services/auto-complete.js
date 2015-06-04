@@ -74,6 +74,11 @@
     '  display: none;' +
     '}' +
 
+    '.auto-complete-div-multi-wrapper {'+
+    '  background-color: #ddd;'+
+    '  min-height: 2em;'+
+    '}'+
+
     '.auto-complete-div-multi-wrapper auto-complete-div.default-style {'+
     '  position: relative;'+
     '  display: inline-block;'+
