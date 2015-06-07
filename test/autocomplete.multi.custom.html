@@ -2,10 +2,13 @@
 <html><head>
   <title>test</title>
   <script src="lib/angular.js"></script>
+  <script src="../build/angularjs-autocomplete.min.js"></script>
+  <!--
   <script src="../directives/auto-complete.js"></script>
   <script src="../directives/auto-complete-multi.js"></script>
   <script src="../directives/auto-complete-div.js"></script>
   <script src="../services/auto-complete.js"></script>
+  -->
   <script id="javascript">
   angular.module('myApp', ['angularjs-autocomplete']).controller('MyCtrl', function($scope) {
     $scope.source3 = [{key:1, text:'One'}, {key:2, text:'Two'}, {key:3, text:'Three'}, {key:4, text:'Four'}];
@@ -48,9 +51,10 @@
   }
   auto-complete-div input {  
     outline: none;
+    background-color: transparent;
     border: 0;
     padding: 0;
-    margin: 2px 0 0 3px;  background-color: #fff
+    margin: 2px 0 0 3px;
   }
   auto-complete-div ul {  
     background-color: yellow;
@@ -77,6 +81,11 @@
   auto-complete-div ul li.selected {
     background-color: #ccc;
   }
+  #sh2 span.key1 { background-color: red; }
+  #sh2 span.key2 { background-color: green; }
+  #sh2 span.key3 { background-color: blue; }
+  #sh2 span.key4 { background-color: darkblue; }
+
   </style>
 </head> 
 <body ng-app="myApp" ng-controller="MyCtrl">
@@ -91,19 +100,19 @@
 
 
 <div id="sh2">
-  <span ng-repeat="obj in foo5 track by $index">
+  <span ng-repeat="obj in foo5 track by $index" ng-class="['key'+obj.key]">
     {{'('+obj.key+') '+obj.text}})
     <a href="" ng-click="foo5.splice($index, 1)">x</a>
   </span>
   <auto-complete-div 
-    multiple
+    multiple="true"
     default-style="false"
     ng-model="foo5" 
     source="source3" 
     value-changed="callback(value)" 
     value-property="key" 
     display-property="text">
-    <input size="2" />
+    <input size="10" placeholder="Select One" />
     <ul></ul>
   </auto-complete-div>
 </div>

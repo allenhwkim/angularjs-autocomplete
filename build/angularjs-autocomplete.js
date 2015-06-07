@@ -102,10 +102,113 @@
 
   angular.module('angularjs-autocomplete',[]);
   angular.module('angularjs-autocomplete').
-    directive('autoComplete', function(_$compile_, _$parse_) {
+    directive('autoComplete', ['$compile', '$parse', function(_$compile_, _$parse_) {
       $compile = _$compile_, $parse = _$parse_;
       return { 
         link: linkFunc };
+    }]);
+})();
+
+(function(){
+  'use strict';
+
+  // return dasherized from  underscored/camelcased string
+  var dasherize = function(string) {
+    return string.replace(/_/g, '-').
+      replace(/([a-z])([A-Z])/g, function(_,$1, $2) {
+        return $1+'-'+$2.toLowerCase();
+      });
+  };
+
+  // accepted attributes
+  var autoCompleteAttrs = [
+    'placeholder',
+    'ngModel', 'valueChanged', 'source', 'pathToData', 'minChars',
+    'defaultStyle', 'valueProperty', 'displayProperty'
+  ];
+
+  // build autocomplet-div tag with input and select
+  var buildACDiv = function(controlEl, attrs) {
+    var acDiv = document.createElement('auto-complete-div');
+    var controlBCR = controlEl.getBoundingClientRect();
+    acDiv.controlEl = controlEl;
+
+    var inputEl = document.createElement('input');
+    attrs.placeholder = attrs.placeholder || 'Select';
+    inputEl.setAttribute('placeholder', attrs.placeholder);
+    inputEl.setAttribute('size', attrs.placeholder.length);
+
+    attrs.ngDisabled && 
+      inputEl.setAttribute('ng-disabled', attrs.ngDisabled);
+    acDiv.appendChild(inputEl);
+
+    var ulEl = document.createElement('ul');
+    acDiv.appendChild(ulEl);
+
+    autoCompleteAttrs.map(function(acAttr) {
+      if (attrs[acAttr]) {
+        var attrValue = attrs[acAttr];
+        acDiv.setAttribute(dasherize(acAttr), attrValue);
+      }
+    });
+    acDiv.style.position = 'absolute';
+    //acDiv.style.display = 'none';
+    return acDiv;
+  };
+
+  var buildMultiACDiv = function(controlEl, attrs) {
+    var deleteLink = document.createElement('button');
+    deleteLink.innerHTML = 'x';
+    deleteLink.className += ' delete';
+    deleteLink.setAttribute('ng-click', attrs.ngModel+'.splice($index, 1); $event.stopPropagation()');
+
+    var ngRepeatDiv = document.createElement('span');
+    ngRepeatDiv.className += ' auto-complete-repeat';
+    ngRepeatDiv.setAttribute('ng-repeat', 
+      'obj in '+attrs.ngModel+' track by $index');
+    ngRepeatDiv.innerHTML = '{{obj["'+attrs.displayProperty+'"] || obj}}';
+    ngRepeatDiv.appendChild(deleteLink);
+
+    var multiACDiv = document.createElement('div');
+    multiACDiv.className = 'auto-complete-div-multi-wrapper';
+    multiACDiv.appendChild(ngRepeatDiv);
+    
+    return multiACDiv;
+  };
+
+  var compileFunc = function(tElement, tAttrs)  {
+    tElement[0].style.position = 'relative';
+
+    var controlEl = tElement[0].querySelector('select');
+    void 0;
+    controlEl.style.display = 'none';
+    controlEl.multiple = true;
+
+    tAttrs.valueProperty = tAttrs.valueProperty || 'id';
+    tAttrs.displayProperty = tAttrs.displayProperty || 'value';
+    tAttrs.ngModel = controlEl.getAttribute('ng-model');
+
+    // 1. build <auto-complete-div>
+    var multiACDiv = buildMultiACDiv(controlEl, tAttrs);
+    var acDiv = buildACDiv(controlEl, tAttrs);
+    multiACDiv.appendChild(acDiv);
+    tElement[0].appendChild(multiACDiv);
+
+    // 2. respond to click
+    tElement[0].addEventListener('click', function() {
+      var acDivInput = acDiv.querySelector('input');
+      acDivInput.disabled = controlEl.disabled;
+      if (!controlEl.disabled) {
+        acDiv.style.display = 'inline-block';
+        acDivInput.focus();
+      }
+    });
+
+  }; // compileFunc
+
+  angular.module('angularjs-autocomplete').
+    directive('autoCompleteMulti', function() {
+      return { compile: compileFunc };
     });
 })();
 
@@ -154,7 +257,6 @@
   })();
 
   var loadList = function(scope) {
-    void 0;
     var inputEl = scope.inputEl, ulEl = scope.ulEl;
     while(ulEl.firstChild) { 
       ulEl.removeChild(ulEl.firstChild);
@@ -189,7 +291,6 @@
     scope.ulEl.style.display = 'block'; 
     scope.inputEl.focus();
     scope.inputEl.value = '';
-    void 0;
     loadList(scope);
   };
 
@@ -231,14 +332,16 @@
   var linkFunc = function(scope, element, attrs) {
     var inputEl, ulEl, isMultiple, containerEl, controlEl;
     containerEl = element[0];
-    controlEl = element[0].controlEl;
+    scope.controlEl = controlEl = element[0].controlEl;
     scope.containerEl = containerEl;
-    scope.controlEl   = controlEl;
-    scope.isMultiple = isMultiple = controlEl.multiple;
+    scope.isMultiple = isMultiple = 
+      scope.multiple || (controlEl && controlEl.multiple);
     scope.inputEl = inputEl = element[0].querySelector('input');
     scope.ulEl = ulEl = element[0].querySelector('ul');
 
-    controlEl && (controlEl.readOnly = true);
+    if (controlEl) {
+      controlEl.readOnly = true;
+    }
 
     // add default class css to head tag
     if (scope.defaultStyle !== false) {
@@ -246,24 +349,32 @@
       AutoComplete.injectDefaultStyle();
     }
 
-    isMultiple && 
-      inputEl.parentNode.parentNode.addEventListener('click', function() {
-        !controlEl.disabled && focusInputEl(scope);
-      });
+    //isMultiple && 
+    //  inputEl.parentNode.parentNode.addEventListener('click', function() {
+    //    if (controlEl) {
+    //      !controlEl.disabled && focusInputEl(scope);
+    //    } else {
+    //      focusInputEl(scope);
+    //    }
+    //  });
 
     scope.select = function(liEl) {
       liEl.className = '';
       hideAutoselect(scope);
       $timeout(function() {
         if (attrs.ngModel) {
-          if (controlEl.tagName == 'INPUT') {
-            scope.ngModel = liEl.innerHTML ;
-          } else if (isMultiple) {
+          if (isMultiple) {
             scope.ngModel.push(liEl.model);
-          } else if (controlEl.tagName == 'SELECT') {
+          } else if (controlEl) {
+            if (controlEl.tagName == 'INPUT') {
+              scope.ngModel = liEl.innerHTML ;
+            } else if (controlEl.tagName == 'SELECT') {
+              scope.ngModel = liEl.modelValue;
+              controlEl.placeholderEl.innerHTML = liEl.viewValue;
+            } 
+          } else {
             scope.ngModel = liEl.modelValue;
-            controlEl.placeholderEl.innerHTML = liEl.viewValue;
-          } 
+          }
         }
         inputEl.value = '';
         scope.valueChanged({value: liEl.model}); //user scope
@@ -271,7 +382,11 @@
     };
 
     inputEl.addEventListener('focus', function(evt) {
-      !controlEl.disabled && focusInputEl(scope);
+      if (controlEl) {
+        !controlEl.disabled && focusInputEl(scope);
+      } else {
+        focusInputEl(scope);
+      }
     }); 
 
     inputEl.addEventListener('blur', function() {
@@ -290,7 +405,6 @@
     inputEl.addEventListener('input', function() {
       var delayMs = scope.source.constructor.name == 'Array' ? 10 : 500;
       delay(function() { //executing after user stopped typing
-        void 0;
         loadList(scope);
       }, delayMs);
 
@@ -309,19 +423,21 @@
       return {
         restrict: 'E',
         scope: {
-          ngModel : '=', 
-          source : '=', 
-          minChars : '=', 
-          defaultStyle : '=', 
-          pathToData : '@', 
+          ngModel: '=', 
+          source: '=', 
+          minChars: '=', 
+          multiple: '=',
+          defaultStyle: '=', 
+          pathToData: '@', 
           valueProperty: '@',
           displayProperty: '@',
           placeholder: '@',
-          valueChanged : '&'
+          valueChanged: '&'
         },
         link: linkFunc 
       };
     };
+  autoCompleteDiv.$inject = ['$timeout', '$filter', '$compile', 'AutoComplete'];
 
   angular.module('angularjs-autocomplete').
     directive('autoCompleteDiv', autoCompleteDiv);
@@ -505,7 +621,7 @@
   };
 
   angular.module('angularjs-autocomplete').
-    factory('AutoComplete', function(_$q_, _$http_) {
+    factory('AutoComplete', ['$q', '$http', function(_$q_, _$http_) {
       $q = _$q_, $http = _$http_;
       return {
         defaultStyle: defaultStyle,
@@ -514,5 +630,5 @@
         getRemoteData: getRemoteData,
         injectDefaultStyle: injectDefaultStyleToHead
       };
-    });
+    }]);
 })();

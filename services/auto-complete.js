@@ -176,7 +176,7 @@
   };
 
   angular.module('angularjs-autocomplete').
-    factory('AutoComplete', function(_$q_, _$http_) {
+    factory('AutoComplete', ['$q', '$http', function(_$q_, _$http_) {
       $q = _$q_, $http = _$http_;
       return {
         defaultStyle: defaultStyle,
@@ -185,5 +185,5 @@
         getRemoteData: getRemoteData,
         injectDefaultStyle: injectDefaultStyleToHead
       };
-    });
+    }]);
 })();

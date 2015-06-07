@@ -1,5 +1,6 @@
 (function(){
   'use strict';
+  var $compile;
 
   // return dasherized from  underscored/camelcased string
   var dasherize = function(string) {
@@ -23,7 +24,10 @@
     acDiv.controlEl = controlEl;
 
     var inputEl = document.createElement('input');
+    attrs.placeholder = attrs.placeholder || 'Select';
     inputEl.setAttribute('placeholder', attrs.placeholder);
+    inputEl.setAttribute('size', attrs.placeholder.length);
+
     attrs.ngDisabled && 
       inputEl.setAttribute('ng-disabled', attrs.ngDisabled);
     acDiv.appendChild(inputEl);
@@ -62,37 +66,40 @@
     return multiACDiv;
   };
 
-  var compileFunc = function(tElement, tAttrs)  {
-    tElement[0].style.position = 'relative';
+  var linkFunc = function(scope, element, attrs)  {
+    element[0].style.position = 'relative';
 
-    var controlEl = tElement[0].querySelector('select');
+    var controlEl = element[0].querySelector('select');
     controlEl.style.display = 'none';
     controlEl.multiple = true;
 
-    tAttrs.valueProperty = tAttrs.valueProperty || 'id';
-    tAttrs.displayProperty = tAttrs.displayProperty || 'value';
-    tAttrs.ngModel = controlEl.getAttribute('ng-model');
+    attrs.valueProperty = attrs.valueProperty || 'id';
+    attrs.displayProperty = attrs.displayProperty || 'value';
+    attrs.ngModel = controlEl.getAttribute('ng-model');
 
     // 1. build <auto-complete-div>
-    var multiACDiv = buildMultiACDiv(controlEl, tAttrs);
-    var acDiv = buildACDiv(controlEl, tAttrs);
+    var multiACDiv = buildMultiACDiv(controlEl, attrs);
+    var acDiv = buildACDiv(controlEl, attrs);
     multiACDiv.appendChild(acDiv);
-    tElement[0].appendChild(multiACDiv);
+    element[0].appendChild(multiACDiv);
 
     // 2. respond to click
-    tElement[0].addEventListener('click', function() {
-      var acDivInput = acDiv.querySelector('input');
-      acDivInput.disabled = controlEl.disabled;
+    element[0].addEventListener('click', function() {
       if (!controlEl.disabled) {
+        var acDivInput = acDiv.querySelector('input');
+        acDivInput.disabled = controlEl.disabled;
         acDiv.style.display = 'inline-block';
         acDivInput.focus();
       }
     });
 
+    $compile(element.contents())(scope);
+
   }; // compileFunc
 
   angular.module('angularjs-autocomplete').
-    directive('autoCompleteMulti', function() {
-      return { compile: compileFunc };
-    });
+    directive('autoCompleteMulti', ['$compile', function(_$compile_) {
+      $compile = _$compile_;
+      return { link: linkFunc };
+    }]);
 })();

@@ -43,7 +43,6 @@
   })();
 
   var loadList = function(scope) {
-    console.log(111111111111);
     var inputEl = scope.inputEl, ulEl = scope.ulEl;
     while(ulEl.firstChild) { 
       ulEl.removeChild(ulEl.firstChild);
@@ -78,7 +77,6 @@
     scope.ulEl.style.display = 'block'; 
     scope.inputEl.focus();
     scope.inputEl.value = '';
-    console.log(2222222222);
     loadList(scope);
   };
 
@@ -120,14 +118,16 @@
   var linkFunc = function(scope, element, attrs) {
     var inputEl, ulEl, isMultiple, containerEl, controlEl;
     containerEl = element[0];
-    controlEl = element[0].controlEl;
+    scope.controlEl = controlEl = element[0].controlEl;
     scope.containerEl = containerEl;
-    scope.controlEl   = controlEl;
-    scope.isMultiple = isMultiple = controlEl.multiple;
+    scope.isMultiple = isMultiple = 
+      scope.multiple || (controlEl && controlEl.multiple);
     scope.inputEl = inputEl = element[0].querySelector('input');
     scope.ulEl = ulEl = element[0].querySelector('ul');
 
-    controlEl && (controlEl.readOnly = true);
+    if (controlEl) {
+      controlEl.readOnly = true;
+    }
 
     // add default class css to head tag
     if (scope.defaultStyle !== false) {
@@ -135,24 +135,32 @@
       AutoComplete.injectDefaultStyle();
     }
 
-    isMultiple && 
-      inputEl.parentNode.parentNode.addEventListener('click', function() {
-        !controlEl.disabled && focusInputEl(scope);
-      });
+    //isMultiple && 
+    //  inputEl.parentNode.parentNode.addEventListener('click', function() {
+    //    if (controlEl) {
+    //      !controlEl.disabled && focusInputEl(scope);
+    //    } else {
+    //      focusInputEl(scope);
+    //    }
+    //  });
 
     scope.select = function(liEl) {
       liEl.className = '';
       hideAutoselect(scope);
       $timeout(function() {
         if (attrs.ngModel) {
-          if (controlEl.tagName == 'INPUT') {
-            scope.ngModel = liEl.innerHTML ;
-          } else if (isMultiple) {
+          if (isMultiple) {
             scope.ngModel.push(liEl.model);
-          } else if (controlEl.tagName == 'SELECT') {
+          } else if (controlEl) {
+            if (controlEl.tagName == 'INPUT') {
+              scope.ngModel = liEl.innerHTML ;
+            } else if (controlEl.tagName == 'SELECT') {
+              scope.ngModel = liEl.modelValue;
+              controlEl.placeholderEl.innerHTML = liEl.viewValue;
+            } 
+          } else {
             scope.ngModel = liEl.modelValue;
-            controlEl.placeholderEl.innerHTML = liEl.viewValue;
-          } 
+          }
         }
         inputEl.value = '';
         scope.valueChanged({value: liEl.model}); //user scope
@@ -160,7 +168,11 @@
     };
 
     inputEl.addEventListener('focus', function(evt) {
-      !controlEl.disabled && focusInputEl(scope);
+      if (controlEl) {
+        !controlEl.disabled && focusInputEl(scope);
+      } else {
+        focusInputEl(scope);
+      }
     }); 
 
     inputEl.addEventListener('blur', function() {
@@ -179,7 +191,6 @@
     inputEl.addEventListener('input', function() {
       var delayMs = scope.source.constructor.name == 'Array' ? 10 : 500;
       delay(function() { //executing after user stopped typing
-        console.log(33333333333);
         loadList(scope);
       }, delayMs);
 
@@ -198,19 +209,21 @@
       return {
         restrict: 'E',
         scope: {
-          ngModel : '=', 
-          source : '=', 
-          minChars : '=', 
-          defaultStyle : '=', 
-          pathToData : '@', 
+          ngModel: '=', 
+          source: '=', 
+          minChars: '=', 
+          multiple: '=',
+          defaultStyle: '=', 
+          pathToData: '@', 
           valueProperty: '@',
           displayProperty: '@',
           placeholder: '@',
-          valueChanged : '&'
+          valueChanged: '&'
         },
         link: linkFunc 
       };
     };
+  autoCompleteDiv.$inject = ['$timeout', '$filter', '$compile', 'AutoComplete'];
 
   angular.module('angularjs-autocomplete').
     directive('autoCompleteDiv', autoCompleteDiv);

@@ -102,9 +102,9 @@
 
   angular.module('angularjs-autocomplete',[]);
   angular.module('angularjs-autocomplete').
-    directive('autoComplete', function(_$compile_, _$parse_) {
+    directive('autoComplete', ['$compile', '$parse', function(_$compile_, _$parse_) {
       $compile = _$compile_, $parse = _$parse_;
       return { 
         link: linkFunc };
-    });
+    }]);
 })();

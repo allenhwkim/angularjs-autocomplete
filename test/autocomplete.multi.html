@@ -3,6 +3,9 @@
   <head>
     <title>test</title>
     <script src="lib/angular.js"></script>
+  <!--
+  <script src="../build/angularjs-autocomplete.min.js"></script>
+  -->
     <script src="../directives/auto-complete.js"></script>
     <script src="../directives/auto-complete-multi.js"></script>
     <script src="../directives/auto-complete-div.js"></script>
@@ -12,6 +15,7 @@
         $scope.source1 = ["this", "is", "array", "of", "text"]; 
         $scope.source2 = [{id:1, value:'One'}, {id:2, value:'Two'}, {id:3, value:'Three'}, {id:4, value:'Four'}];
         $scope.callback = function(selected) {
+          $scope.foo_ids = $scope.foo.map(function(el) {return el.id || el;});
           $scope.selected = selected;
         };
         $scope.foo = ["is"];
@@ -39,15 +43,20 @@
     </ul>
     <br/>
     <br/>
-    <div auto-complete-multi 
-      placeholder="Select One"
-      source="source" 
-      value-changed="callback(value)"> 
-      <select id='sp' ng-disabled="disabled" ng-model="foo"></select>
+    <input type="button" ng-model="addRemove" ng-click="addRemove = !addRemove" value="Add/Remove" />
+    <div ng-if="addRemove">
+      <div auto-complete-multi 
+        placeholder="Select One"
+        source="source" 
+        value-changed="callback(value)"> 
+        <select id='sp' ng-disabled="disabled" ng-model="foo"></select>
+        <input type="hidden" name="foo_ids" ng-model="foo_ids" ></select>
+      </div>
+      <input type="checkbox" ng-model="disabled"> Disable
     </div>
-    <input type="checkbox" ng-model="disabled"> Disable
-    <script>printHTML("select")</script>
+    <script>printHTML("div[auto-complete-multi]")</script>
     <br/>$scope.foo:  <b>{{ foo }}</b>
+    <br/>$scope.foo_ids:  <b>{{ foo_ids }}</b>
     <br/>$scope.source: {{ source }}
     <br/>$scope.selected = {{ selected }}
   </body>

@@ -15,6 +15,7 @@ gulp.task('clean', function() {
 gulp.task('build-js', function() {
   return gulp.src([
     'directives/auto-complete.js',
+    'directives/auto-complete-multi.js',
     'directives/auto-complete-div.js',
     'services/*.js'])
     .pipe(concat('angularjs-autocomplete.debug.js'))
