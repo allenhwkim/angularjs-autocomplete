@@ -58,15 +58,13 @@
       controlEl.placeholderEl = placeholderEl;
       element[0].appendChild(placeholderEl);
       // if ngModel value is undefined, show text with placeholder
-      if ($parse(attrs.ngModel)(scope) === undefined) { 
-        placeholderEl.innerHTML = attrs.placeholder;
-      } 
-      // if noModel has value, observe initSelectText and set text
-      else {
-        attrs.$observe('initSelectText', function(val) {
-          val && (placeholderEl.innerHTML = val);
-        });
-      }
+      var modelValue = $parse(attrs.ngModel)(scope);
+      scope.$watch(attrs.ngModel, function(val) {
+        !val && (placeholderEl.innerHTML = attrs.placeholder);
+      });
+      attrs.$observe('initSelectText', function(val) {
+        modelValue && val && (placeholderEl.innerHTML = val);
+      });
     }
 
     // 1. build <auto-complete-div>
@@ -111,6 +109,7 @@
 
 (function(){
   'use strict';
+  var $compile;
 
   // return dasherized from  underscored/camelcased string
   var dasherize = function(string) {
@@ -176,40 +175,42 @@
     return multiACDiv;
   };
 
-  var compileFunc = function(tElement, tAttrs)  {
-    tElement[0].style.position = 'relative';
+  var linkFunc = function(scope, element, attrs)  {
+    element[0].style.position = 'relative';
 
-    var controlEl = tElement[0].querySelector('select');
-    console.log('controlEl', controlEl);
+    var controlEl = element[0].querySelector('select');
     controlEl.style.display = 'none';
     controlEl.multiple = true;
 
-    tAttrs.valueProperty = tAttrs.valueProperty || 'id';
-    tAttrs.displayProperty = tAttrs.displayProperty || 'value';
-    tAttrs.ngModel = controlEl.getAttribute('ng-model');
+    attrs.valueProperty = attrs.valueProperty || 'id';
+    attrs.displayProperty = attrs.displayProperty || 'value';
+    attrs.ngModel = controlEl.getAttribute('ng-model');
 
     // 1. build <auto-complete-div>
-    var multiACDiv = buildMultiACDiv(controlEl, tAttrs);
-    var acDiv = buildACDiv(controlEl, tAttrs);
+    var multiACDiv = buildMultiACDiv(controlEl, attrs);
+    var acDiv = buildACDiv(controlEl, attrs);
     multiACDiv.appendChild(acDiv);
-    tElement[0].appendChild(multiACDiv);
+    element[0].appendChild(multiACDiv);
 
     // 2. respond to click
-    tElement[0].addEventListener('click', function() {
-      var acDivInput = acDiv.querySelector('input');
-      acDivInput.disabled = controlEl.disabled;
+    element[0].addEventListener('click', function() {
       if (!controlEl.disabled) {
+        var acDivInput = acDiv.querySelector('input');
+        acDivInput.disabled = controlEl.disabled;
         acDiv.style.display = 'inline-block';
         acDivInput.focus();
       }
     });
 
+    $compile(element.contents())(scope);
+
   }; // compileFunc
 
   angular.module('angularjs-autocomplete').
-    directive('autoCompleteMulti', function() {
-      return { compile: compileFunc };
-    });
+    directive('autoCompleteMulti', ['$compile', function(_$compile_) {
+      $compile = _$compile_;
+      return { link: linkFunc };
+    }]);
 })();
 
 (function(){

@@ -58,15 +58,13 @@
       controlEl.placeholderEl = placeholderEl;
       element[0].appendChild(placeholderEl);
       // if ngModel value is undefined, show text with placeholder
-      if ($parse(attrs.ngModel)(scope) === undefined) { 
-        placeholderEl.innerHTML = attrs.placeholder;
-      } 
-      // if noModel has value, observe initSelectText and set text
-      else {
-        attrs.$observe('initSelectText', function(val) {
-          val && (placeholderEl.innerHTML = val);
-        });
-      }
+      var modelValue = $parse(attrs.ngModel)(scope);
+      scope.$watch(attrs.ngModel, function(val) {
+        !val && (placeholderEl.innerHTML = attrs.placeholder);
+      });
+      attrs.$observe('initSelectText', function(val) {
+        modelValue && val && (placeholderEl.innerHTML = val);
+      });
     }
 
     // 1. build <auto-complete-div>
