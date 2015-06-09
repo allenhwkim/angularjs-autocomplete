@@ -23,7 +23,7 @@ Examples
   Auto Complete INPUT tag
   <pre>
    &lt;div auto-complete  source="source">
-     &lt;input ng-model="foo" ng-disabled="disabled" placeholder="Select">
+     &lt;input ng-model="foo" placeholder="Select">
    &lt;/div>
   </pre>
  </td>
@@ -36,7 +36,8 @@ Examples
  <td>
   Auto Complete SELECT tag
   <pre>
-   &lt;div auto-complete source="source" placeholder="Select Bar">
+   &lt;div auto-complete source="source" 
+     placeholder="Select Bar">
      &lt;select ng-model="bar">&lt;/select>
    &lt;/div>
   </pre>
@@ -50,8 +51,9 @@ Examples
  <td>
   Google Address Complete Example
   <pre>
-   &lt;div auto-complete source="source" path-to-data="results"
-     display-property="formatted_address" min-chars="2"
+   &lt;div auto-complete source="source" 
+     path-to-data="results" min-chars="2"
+     display-property="formatted_address" 
      placeholder="Enter Address">
      &lt;input id="ip" ng-model="addressText" name="addressText">
    &lt;/div>
@@ -66,7 +68,8 @@ Examples
  <td>
   Multiple Autocomplete
   <pre>
-   &lt;div auto-complete-multi placeholder="Select One" source="source"> 
+   &lt;div auto-complete-multi 
+     placeholder="Select One" source="source"> 
      &lt;select ng-model="foo">&lt;/select>
    &lt;/div>
   </pre>
@@ -85,8 +88,8 @@ Examples
       {{'('+obj.key+') '+obj.text}})
       &lt;a href="" ng-click="foo5.splice($index, 1)">x&lt;/a>
     &lt;/span>
-    &lt;auto-complete-div multiple
-      default-style="false" ng-model="foo5" source="source3">
+    &lt;auto-complete-div multiple ng-model="foo5"
+      default-style="false"  source="source3">
       &lt;input size="2" />
       &lt;ul>&lt;/ul>
     &lt;/auto-complete-div>
