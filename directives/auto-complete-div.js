@@ -1,6 +1,6 @@
 (function(){
   'use strict';
-  var $timeout, $filter, $compile, AutoComplete;
+  var $timeout, $filter, AutoComplete;
 
   var showLoading = function(ulEl, show) {
     if (show) {
@@ -23,7 +23,7 @@
       return liEl;
     };
     if (scope.placeholder &&
-        !scope.isMultiple &&
+        !scope.multiple &&
         scope.controlEl.tagName == 'SELECT') {
       ulEl.appendChild(getLiEl(undefined, scope.placeholder));
     }
@@ -69,7 +69,7 @@
   };
 
   var hideAutoselect = function(scope) {
-    var elToHide = scope.isMultiple ? scope.ulEl : scope.containerEl;
+    var elToHide = scope.multiple ? scope.ulEl : scope.containerEl;
     elToHide.style.display = 'none';
   };
 
@@ -107,7 +107,7 @@
         break;
       case 8: // BACKSPACE
         // remove the last element for multiple and empty input
-        if (scope.isMultiple && scope.inputEl.value === '') {
+        if (scope.multiple && scope.inputEl.value === '') {
           $timeout(function() {
             scope.ngModel.pop();
           });
@@ -116,17 +116,78 @@
   };
 
   var linkFunc = function(scope, element, attrs) {
-    var inputEl, ulEl, isMultiple, containerEl, controlEl;
-    containerEl = element[0];
-    scope.controlEl = controlEl = element[0].controlEl;
-    scope.containerEl = containerEl;
-    scope.isMultiple = isMultiple = 
-      scope.multiple || (controlEl && controlEl.multiple);
+    var inputEl, ulEl, containerEl;
+
+    scope.containerEl = containerEl = element[0];
     scope.inputEl = inputEl = element[0].querySelector('input');
     scope.ulEl = ulEl = element[0].querySelector('ul');
 
-    if (controlEl) {
+    var parentEl, controlEl, placeholderEl;
+    if (scope.multiple) {
+      parentEl = element[0].parentElement.parentElement; //acDiv->wrapper->acMulti
+      scope.controlEl = controlEl = parentEl.querySelector('select');
+    } else {
+      parentEl = element[0].parentElement;
+      scope.controlEl = controlEl = parentEl.querySelector('input, select');
+      placeholderEl = parentEl.querySelector('.select-placeholder');
+    }
+
+    if (controlEl && !scope.multiple) {
       controlEl.readOnly = true;
+
+      if (controlEl.tagName == 'SELECT') {
+
+        var controlBCR = controlEl.getBoundingClientRect();
+        placeholderEl.style.lineHeight = controlBCR.height + 'px';
+
+        if (attrs.ngModel) {
+          scope.$parent.$watch(attrs.ngModel, function(val) {
+            !val && (placeholderEl.innerHTML = attrs.placeholder);
+          });
+
+          if (scope.ngModel) {
+            attrs.$observe('initSelectText', function(val) {
+              val && (placeholderEl.innerHTML = val);
+            });
+          }
+        }
+
+        controlEl.addEventListener('mouseover', function() {
+          console.log('mouseover');
+          for (var i=0; i<controlEl.children.length; i++) {
+            controlEl.children[i].style.display = 'none';
+          }
+        });
+        controlEl.addEventListener('mouseout', function() {
+          console.log('mouseout');
+          for (var i=0; i<controlEl.children.length; i++) {
+            controlEl.children[i].style.display = '';
+          }
+        });
+
+      }
+
+      controlEl.addEventListener('click', function() {
+        if (!controlEl.disabled) {
+          containerEl.style.display = 'block';
+          var controlBCR = controlEl.getBoundingClientRect();
+          containerEl.style.width = controlBCR.width + 'px';
+          inputEl.style.width = (controlBCR.width - 30) + 'px';
+          inputEl.style.height = controlBCR.height + 'px';
+          inputEl.focus();
+        }
+      });
+
+    } else if (scope.multiple) {
+      parentEl.addEventListener('click', function() {
+        if (controlEl) {
+          inputEl.disabled = controlEl.disabled;
+          if (!controlEl.disabled) {
+            containerEl.style.display = 'inline-block';
+            inputEl.focus();
+          }
+        }
+      });
     }
 
     // add default class css to head tag
@@ -135,28 +196,19 @@
       AutoComplete.injectDefaultStyle();
     }
 
-    //isMultiple && 
-    //  inputEl.parentNode.parentNode.addEventListener('click', function() {
-    //    if (controlEl) {
-    //      !controlEl.disabled && focusInputEl(scope);
-    //    } else {
-    //      focusInputEl(scope);
-    //    }
-    //  });
-
     scope.select = function(liEl) {
       liEl.className = '';
       hideAutoselect(scope);
       $timeout(function() {
         if (attrs.ngModel) {
-          if (isMultiple) {
+          if (scope.multiple) {
             scope.ngModel.push(liEl.model);
           } else if (controlEl) {
             if (controlEl.tagName == 'INPUT') {
               scope.ngModel = liEl.innerHTML ;
             } else if (controlEl.tagName == 'SELECT') {
               scope.ngModel = liEl.modelValue;
-              controlEl.placeholderEl.innerHTML = liEl.viewValue;
+              placeholderEl.innerHTML = liEl.viewValue;
             } 
           } else {
             scope.ngModel = liEl.modelValue;
@@ -194,16 +246,17 @@
         loadList(scope);
       }, delayMs);
 
-      isMultiple && inputEl.setAttribute('size', inputEl.value.length+1);
+      if (scope.multiple) {
+        inputEl.setAttribute('size', inputEl.value.length+1);
+      }
     });
 
   };
 
   var autoCompleteDiv =
-    function(_$timeout_, _$filter_, _$compile_, _AutoComplete_) {
+    function(_$timeout_, _$filter_, _AutoComplete_) {
       $timeout = _$timeout_;
       $filter = _$filter_;
-      $compile = _$compile_;
       AutoComplete = _AutoComplete_;
 
       return {
@@ -218,12 +271,13 @@
           valueProperty: '@',
           displayProperty: '@',
           placeholder: '@',
+          initialSelectText: '@',
           valueChanged: '&'
         },
         link: linkFunc 
       };
     };
-  autoCompleteDiv.$inject = ['$timeout', '$filter', '$compile', 'AutoComplete'];
+  autoCompleteDiv.$inject = ['$timeout', '$filter', 'AutoComplete'];
 
   angular.module('angularjs-autocomplete').
     directive('autoCompleteDiv', autoCompleteDiv);

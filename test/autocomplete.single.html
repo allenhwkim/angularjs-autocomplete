@@ -24,8 +24,8 @@
         $scope.valueProp = 'id';
         $scope.bar = 1;
         $timeout(function() {
-          $scope.selected = {id:1, value:'One'};
-        },1000);
+          $scope.barText = 'ONE';
+        }, 1000);
       });
       var printHTML = function(selector) {
         document.write('<pre>'+
@@ -53,30 +53,30 @@
         {{source2}}</li>
     </ul>
 
-    <button ng-click="showInputTag=!showInputTag">Show/Hide Single INPUT Autocomplete</button>
-    <div ng-if="showInputTag">
+    <button ng-click="show1=!show1">Show/hide</button>
+    <div ng-if="show1">
       <div auto-complete id="ih" source="source" value-changed="callback(value)">
-        <input ng-model="foo" ng-disabled="disabled" placeholder="Select Foo" />
+        <input ng-model="foo" ng-disabled="disabled" placeholder="Select" />
       </div>
       <input type="checkbox" ng-model="disabled"> Disable 
-      <button ng-click="foo=''"> Clear </button>
+      <button ng-click="foo=''">Clear</button> 
       <script>printHTML('div[auto-complete]#ih');</script>
       <br/>$scope.foo:  <b>{{ foo }}</b>
     </div>
 
     <br/>
     <br/>
-    <button ng-click="showSelectTag=!showSelectTag">Show/Hide SELECT Autocomplete</button>
-    <div ng-if="showSelectTag">
+    <button ng-click="show2=!show2">Show/hide SELECT</button>
+    <div ng-if="show2">
       <div auto-complete id="sh" source="source" 
         value-changed="callback(value)" 
-        init-select-text="{{selected.value}}"
+        init-select-text="{{barText}}"
         placeholder="Select Bar">
         <select id='sh' ng-model="bar" ng-disabled="disabled">
         </select>
       </div>
       <input type="checkbox" ng-model="disabled"> Disable 
-      <button ng-click="bar=''"> Clear </button>
+      <button ng-click="bar=''">Clear</button> 
       <script>printHTML('div[auto-complete]#sh');</script>
       <br/>$scope.bar:  <b>{{ bar }}</b>
 

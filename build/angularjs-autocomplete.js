@@ -1,6 +1,5 @@
 (function(){
   'use strict';
-  var $compile, $parse;
 
   // return dasherized from  underscored/camelcased string
   var dasherize = function(string) {
@@ -12,16 +11,14 @@
 
   // accepted attributes
   var autoCompleteAttrs = [
-    'placeholder',
+    'placeholder', 'initSelectText',
     'ngModel', 'valueChanged', 'source', 'pathToData', 'minChars',
     'defaultStyle', 'valueProperty', 'displayProperty'
   ];
 
   // build autocomplet-div tag with input and select
-  var buildACDiv = function(controlEl, attrs) {
+  var buildACDiv = function(attrs) {
     var acDiv = document.createElement('auto-complete-div');
-    var controlBCR = controlEl.getBoundingClientRect();
-    acDiv.controlEl = controlEl;
 
     var inputEl = document.createElement('input');
     attrs.ngDisabled && 
@@ -41,7 +38,7 @@
     return acDiv;
   };
 
-  var linkFunc = function(scope, element, attrs)  {
+  var compileFunc = function(element, attrs)  {
     element[0].style.position = 'relative';
 
     var controlEl = element[0].querySelector('input, select');
@@ -51,60 +48,22 @@
     attrs.ngModel = controlEl.getAttribute('ng-model');
 
     if (controlEl.tagName == 'SELECT') {
-      var controlBCR = controlEl.getBoundingClientRect();
       var placeholderEl = document.createElement('div');
       placeholderEl.className = 'select-placeholder';
-      placeholderEl.style.lineHeight = controlBCR.height + 'px';
-      controlEl.placeholderEl = placeholderEl;
       element[0].appendChild(placeholderEl);
-      // if ngModel value is undefined, show text with placeholder
-      var modelValue = $parse(attrs.ngModel)(scope);
-      scope.$watch(attrs.ngModel, function(val) {
-        !val && (placeholderEl.innerHTML = attrs.placeholder);
-      });
-      attrs.$observe('initSelectText', function(val) {
-        modelValue && val && (placeholderEl.innerHTML = val);
-      });
     }
 
-    // 1. build <auto-complete-div>
     var acDiv = buildACDiv(controlEl, attrs);
     element[0].appendChild(acDiv);
-
-    // 2. respond to click by hiding option tags
-    controlEl.addEventListener('mouseover', function() {
-      for (var i=0; i<controlEl.children.length; i++) {
-        controlEl.children[i].style.display = 'none';
-      }
-    });
-    controlEl.addEventListener('mouseout', function() {
-      for (var i=0; i<controlEl.children.length; i++) {
-        controlEl.children[i].style.display = '';
-      }
-    });
-    controlEl.addEventListener('click', function() {
-      if (!controlEl.disabled) {
-        acDiv.style.display = 'block';
-        var controlBCR = controlEl.getBoundingClientRect();
-        var acDivInput = acDiv.querySelector('input');
-        acDiv.style.width = controlBCR.width + 'px';
-        acDivInput.style.width = (controlBCR.width - 30) + 'px';
-        acDivInput.style.height = controlBCR.height + 'px';
-        acDivInput.focus();
-      }
-    });
-
-    $compile(element.contents())(scope);
-
-  }; // linkFunc
+  }; // compileFunc
 
   angular.module('angularjs-autocomplete',[]);
   angular.module('angularjs-autocomplete').
-    directive('autoComplete', ['$compile', '$parse', function(_$compile_, _$parse_) {
-      $compile = _$compile_, $parse = _$parse_;
+    directive('autoComplete', function() {
       return { 
-        link: linkFunc };
-    }]);
+        compile: compileFunc,
+      };
+    });
 })();
 
 (function(){
@@ -121,16 +80,14 @@
 
   // accepted attributes
   var autoCompleteAttrs = [
-    'placeholder',
+    'placeholder', 'multiple',
     'ngModel', 'valueChanged', 'source', 'pathToData', 'minChars',
     'defaultStyle', 'valueProperty', 'displayProperty'
   ];
 
   // build autocomplet-div tag with input and select
-  var buildACDiv = function(controlEl, attrs) {
+  var buildACDiv = function(attrs) {
     var acDiv = document.createElement('auto-complete-div');
-    var controlBCR = controlEl.getBoundingClientRect();
-    acDiv.controlEl = controlEl;
 
     var inputEl = document.createElement('input');
     attrs.placeholder = attrs.placeholder || 'Select';
@@ -155,7 +112,7 @@
     return acDiv;
   };
 
-  var buildMultiACDiv = function(controlEl, attrs) {
+  var buildMultiACDiv = function(attrs) {
     var deleteLink = document.createElement('button');
     deleteLink.innerHTML = 'x';
     deleteLink.className += ' delete';
@@ -175,47 +132,35 @@
     return multiACDiv;
   };
 
-  var linkFunc = function(scope, element, attrs)  {
+  var compileFunc = function(element, attrs)  {
     element[0].style.position = 'relative';
 
     var controlEl = element[0].querySelector('select');
     controlEl.style.display = 'none';
-    controlEl.multiple = true;
 
     attrs.valueProperty = attrs.valueProperty || 'id';
     attrs.displayProperty = attrs.displayProperty || 'value';
     attrs.ngModel = controlEl.getAttribute('ng-model');
+    attrs.multiple = true;
 
     // 1. build <auto-complete-div>
-    var multiACDiv = buildMultiACDiv(controlEl, attrs);
-    var acDiv = buildACDiv(controlEl, attrs);
+    var multiACDiv = buildMultiACDiv(attrs);
+    var acDiv = buildACDiv(attrs);
     multiACDiv.appendChild(acDiv);
     element[0].appendChild(multiACDiv);
-
-    // 2. respond to click
-    element[0].addEventListener('click', function() {
-      if (!controlEl.disabled) {
-        var acDivInput = acDiv.querySelector('input');
-        acDivInput.disabled = controlEl.disabled;
-        acDiv.style.display = 'inline-block';
-        acDivInput.focus();
-      }
-    });
-
-    $compile(element.contents())(scope);
 
   }; // compileFunc
 
   angular.module('angularjs-autocomplete').
     directive('autoCompleteMulti', ['$compile', function(_$compile_) {
       $compile = _$compile_;
-      return { link: linkFunc };
+      return { compile: compileFunc };
     }]);
 })();
 
 (function(){
   'use strict';
-  var $timeout, $filter, $compile, AutoComplete;
+  var $timeout, $filter, AutoComplete;
 
   var showLoading = function(ulEl, show) {
     if (show) {
@@ -238,7 +183,7 @@
       return liEl;
     };
     if (scope.placeholder &&
-        !scope.isMultiple &&
+        !scope.multiple &&
         scope.controlEl.tagName == 'SELECT') {
       ulEl.appendChild(getLiEl(undefined, scope.placeholder));
     }
@@ -284,7 +229,7 @@
   };
 
   var hideAutoselect = function(scope) {
-    var elToHide = scope.isMultiple ? scope.ulEl : scope.containerEl;
+    var elToHide = scope.multiple ? scope.ulEl : scope.containerEl;
     elToHide.style.display = 'none';
   };
 
@@ -322,7 +267,7 @@
         break;
       case 8: // BACKSPACE
         // remove the last element for multiple and empty input
-        if (scope.isMultiple && scope.inputEl.value === '') {
+        if (scope.multiple && scope.inputEl.value === '') {
           $timeout(function() {
             scope.ngModel.pop();
           });
@@ -331,17 +276,78 @@
   };
 
   var linkFunc = function(scope, element, attrs) {
-    var inputEl, ulEl, isMultiple, containerEl, controlEl;
-    containerEl = element[0];
-    scope.controlEl = controlEl = element[0].controlEl;
-    scope.containerEl = containerEl;
-    scope.isMultiple = isMultiple = 
-      scope.multiple || (controlEl && controlEl.multiple);
+    var inputEl, ulEl, containerEl;
+
+    scope.containerEl = containerEl = element[0];
     scope.inputEl = inputEl = element[0].querySelector('input');
     scope.ulEl = ulEl = element[0].querySelector('ul');
 
-    if (controlEl) {
+    var parentEl, controlEl, placeholderEl;
+    if (scope.multiple) {
+      parentEl = element[0].parentElement.parentElement; //acDiv->wrapper->acMulti
+      scope.controlEl = controlEl = parentEl.querySelector('select');
+    } else {
+      parentEl = element[0].parentElement;
+      scope.controlEl = controlEl = parentEl.querySelector('input, select');
+      placeholderEl = parentEl.querySelector('.select-placeholder');
+    }
+
+    if (controlEl && !scope.multiple) {
       controlEl.readOnly = true;
+
+      if (controlEl.tagName == 'SELECT') {
+
+        var controlBCR = controlEl.getBoundingClientRect();
+        placeholderEl.style.lineHeight = controlBCR.height + 'px';
+
+        if (attrs.ngModel) {
+          scope.$parent.$watch(attrs.ngModel, function(val) {
+            !val && (placeholderEl.innerHTML = attrs.placeholder);
+          });
+
+          if (scope.ngModel) {
+            attrs.$observe('initSelectText', function(val) {
+              val && (placeholderEl.innerHTML = val);
+            });
+          }
+        }
+
+        controlEl.addEventListener('mouseover', function() {
+          void 0;
+          for (var i=0; i<controlEl.children.length; i++) {
+            controlEl.children[i].style.display = 'none';
+          }
+        });
+        controlEl.addEventListener('mouseout', function() {
+          void 0;
+          for (var i=0; i<controlEl.children.length; i++) {
+            controlEl.children[i].style.display = '';
+          }
+        });
+
+      }
+
+      controlEl.addEventListener('click', function() {
+        if (!controlEl.disabled) {
+          containerEl.style.display = 'block';
+          var controlBCR = controlEl.getBoundingClientRect();
+          containerEl.style.width = controlBCR.width + 'px';
+          inputEl.style.width = (controlBCR.width - 30) + 'px';
+          inputEl.style.height = controlBCR.height + 'px';
+          inputEl.focus();
+        }
+      });
+
+    } else if (scope.multiple) {
+      parentEl.addEventListener('click', function() {
+        if (controlEl) {
+          inputEl.disabled = controlEl.disabled;
+          if (!controlEl.disabled) {
+            containerEl.style.display = 'inline-block';
+            inputEl.focus();
+          }
+        }
+      });
     }
 
     // add default class css to head tag
@@ -350,28 +356,19 @@
       AutoComplete.injectDefaultStyle();
     }
 
-    //isMultiple && 
-    //  inputEl.parentNode.parentNode.addEventListener('click', function() {
-    //    if (controlEl) {
-    //      !controlEl.disabled && focusInputEl(scope);
-    //    } else {
-    //      focusInputEl(scope);
-    //    }
-    //  });
-
     scope.select = function(liEl) {
       liEl.className = '';
       hideAutoselect(scope);
       $timeout(function() {
         if (attrs.ngModel) {
-          if (isMultiple) {
+          if (scope.multiple) {
             scope.ngModel.push(liEl.model);
           } else if (controlEl) {
             if (controlEl.tagName == 'INPUT') {
               scope.ngModel = liEl.innerHTML ;
             } else if (controlEl.tagName == 'SELECT') {
               scope.ngModel = liEl.modelValue;
-              controlEl.placeholderEl.innerHTML = liEl.viewValue;
+              placeholderEl.innerHTML = liEl.viewValue;
             } 
           } else {
             scope.ngModel = liEl.modelValue;
@@ -409,16 +406,17 @@
         loadList(scope);
       }, delayMs);
 
-      isMultiple && inputEl.setAttribute('size', inputEl.value.length+1);
+      if (scope.multiple) {
+        inputEl.setAttribute('size', inputEl.value.length+1);
+      }
     });
 
   };
 
   var autoCompleteDiv =
-    function(_$timeout_, _$filter_, _$compile_, _AutoComplete_) {
+    function(_$timeout_, _$filter_, _AutoComplete_) {
       $timeout = _$timeout_;
       $filter = _$filter_;
-      $compile = _$compile_;
       AutoComplete = _AutoComplete_;
 
       return {
@@ -433,12 +431,13 @@
           valueProperty: '@',
           displayProperty: '@',
           placeholder: '@',
+          initialSelectText: '@',
           valueChanged: '&'
         },
         link: linkFunc 
       };
     };
-  autoCompleteDiv.$inject = ['$timeout', '$filter', '$compile', 'AutoComplete'];
+  autoCompleteDiv.$inject = ['$timeout', '$filter', 'AutoComplete'];
 
   angular.module('angularjs-autocomplete').
     directive('autoCompleteDiv', autoCompleteDiv);
