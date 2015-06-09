@@ -53,7 +53,7 @@
       element[0].appendChild(placeholderEl);
     }
 
-    var acDiv = buildACDiv(controlEl, attrs);
+    var acDiv = buildACDiv(attrs);
     element[0].appendChild(acDiv);
   }; // compileFunc
 
