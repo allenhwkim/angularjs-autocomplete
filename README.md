@@ -1,12 +1,8 @@
 AngularJS Autocomplete
 ======================
-single or multi autocomplete for INPUT and SELECT tag by static or remote source 
+autocomplete for INPUT and SELECT tag for single/multi, local/remote
 
 
-![Imgur](http://i.imgur.com/Fj0avbY.png?1)
-![Imgur](http://i.imgur.com/46crVoI.png?1)
-![Imgur](http://i.imgur.com/1BhGlVn.png)
-![Imgur](http://i.imgur.com/xFxsgUY.png)
 
 Features
 --------
@@ -16,13 +12,92 @@ Features
   * It treat SELECT element as select element, and INPUT element as INPUT element
 
 Examples
---------
-
-  * [Single Select](http://rawgit.com/allenhwkim/angularjs-autocomplete/master/test/autocomplete.single.html)
-  * [Multi Select](http://rawgit.com/allenhwkim/angularjs-autocomplete/master/test/autocomplete.multi.html)
-  * [Custom Design](http://rawgit.com/allenhwkim/angularjs-autocomplete/master/test/autocomplete.multi.custom.html)
-  * [Google Address Complete](http://rawgit.com/allenhwkim/angularjs-autocomplete/master/test/autocomplete.remote.html)
-
+----------
+<table>
+<tr>
+ <td>
+  <a href="http://rawgit.com/allenhwkim/angularjs-autocomplete/master/test/autocomplete.single.html">
+   <img style="box-shadow:0 0 5px #000" src="http://imgur.com/pNye3wo.png" />
+  </a>
+ <td>
+  Auto Complete INPUT tag
+  <pre>
+   &lt;div auto-complete  source="source">
+     &lt;input ng-model="foo" placeholder="Select">
+   &lt;/div>
+  </pre>
+ </td>
+</tr>
+<tr>
+ <td>
+  <a href="http://rawgit.com/allenhwkim/angularjs-autocomplete/master/test/autocomplete.single.html">
+   <img style="box-shadow:0 0 5px #000" src="http://i.imgur.com/B30s4vN.png" />
+  </a>
+ <td>
+  Auto Complete SELECT tag
+  <pre>
+   &lt;div auto-complete source="source" 
+     placeholder="Select Bar">
+     &lt;select ng-model="bar">&lt;/select>
+   &lt;/div>
+  </pre>
+ </td>
+</tr>
+<tr>
+ <td>
+  <a href="http://rawgit.com/allenhwkim/angularjs-autocomplete/master/test/autocomplete.remote.html">
+   <img style="box-shadow:0 0 5px #000" src="http://i.imgur.com/eYiaGAJ.png" />
+  </a>
+ <td>
+  Google Address Complete Example
+  <pre>
+   &lt;div auto-complete source="source" 
+     path-to-data="results" min-chars="2"
+     display-property="formatted_address" 
+     placeholder="Enter Address">
+     &lt;input id="ip" ng-model="addressText" name="addressText">
+   &lt;/div>
+  </pre>
+ </td>
+</tr>
+<tr>
+ <td>
+  <a href="http://rawgit.com/allenhwkim/angularjs-autocomplete/master/test/autocomplete.multi.html">
+   <img style="box-shadow:0 0 5px #000" src="http://i.imgur.com/5rwjTaG.png" />
+  </a>
+ <td>
+  Multiple Autocomplete
+  <pre>
+   &lt;div auto-complete-multi 
+     placeholder="Select One" source="source"> 
+     &lt;select ng-model="foo">&lt;/select>
+   &lt;/div>
+  </pre>
+ </td>
+</tr>
+<tr>
+ <td>
+  <a href="http://rawgit.com/allenhwkim/angularjs-autocomplete/master/test/autocomplete.multi.custom.html">
+   <img style="box-shadow:0 0 5px #000" src="http://i.imgur.com/Iq3RbcR.png" />
+  </a>
+ <td>
+  Custom Multi-Autocomplete
+  <pre>
+   &lt;div>
+    &lt;span ng-repeat="obj in foo5 track by $index">
+      {{'('+obj.key+') '+obj.text}})
+      &lt;a href="" ng-click="foo5.splice($index, 1)">x&lt;/a>
+    &lt;/span>
+    &lt;auto-complete-div multiple ng-model="foo5"
+      default-style="false"  source="source3">
+      &lt;input size="2" />
+      &lt;ul>&lt;/ul>
+    &lt;/auto-complete-div>
+  &lt;/div>
+  </pre>
+ </td>
+</tr>
+</table>
 
 To Get Started
 --------------
