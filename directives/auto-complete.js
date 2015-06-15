@@ -21,7 +21,7 @@
     var acDiv = document.createElement('auto-complete-div');
 
     var inputEl = document.createElement('input');
-    attrs.ngDisabled && 
+    attrs.ngDisabled &&
       inputEl.setAttribute('ng-disabled', attrs.ngDisabled);
     acDiv.appendChild(inputEl);
 
@@ -60,7 +60,7 @@
   angular.module('angularjs-autocomplete',[]);
   angular.module('angularjs-autocomplete').
     directive('autoComplete', function() {
-      return { 
+      return {
         compile: compileFunc,
       };
     });

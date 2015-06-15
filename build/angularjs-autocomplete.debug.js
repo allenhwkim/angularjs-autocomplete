@@ -21,7 +21,7 @@
     var acDiv = document.createElement('auto-complete-div');
 
     var inputEl = document.createElement('input');
-    attrs.ngDisabled && 
+    attrs.ngDisabled &&
       inputEl.setAttribute('ng-disabled', attrs.ngDisabled);
     acDiv.appendChild(inputEl);
 
@@ -60,7 +60,7 @@
   angular.module('angularjs-autocomplete',[]);
   angular.module('angularjs-autocomplete').
     directive('autoComplete', function() {
-      return { 
+      return {
         compile: compileFunc,
       };
     });
@@ -94,7 +94,7 @@
     inputEl.setAttribute('placeholder', attrs.placeholder);
     inputEl.setAttribute('size', attrs.placeholder.length);
 
-    attrs.ngDisabled && 
+    attrs.ngDisabled &&
       inputEl.setAttribute('ng-disabled', attrs.ngDisabled);
     acDiv.appendChild(inputEl);
 
@@ -107,7 +107,7 @@
         acDiv.setAttribute(dasherize(acAttr), attrValue);
       }
     });
-    acDiv.style.position = 'absolute';
+    acDiv.style.position = 'relative';
     //acDiv.style.display = 'none';
     return acDiv;
   };
@@ -120,7 +120,7 @@
 
     var ngRepeatDiv = document.createElement('span');
     ngRepeatDiv.className += ' auto-complete-repeat';
-    ngRepeatDiv.setAttribute('ng-repeat', 
+    ngRepeatDiv.setAttribute('ng-repeat',
       'obj in '+attrs.ngModel+' track by $index');
     ngRepeatDiv.innerHTML = '{{obj["'+attrs.displayProperty+'"] || obj}}';
     ngRepeatDiv.appendChild(deleteLink);
@@ -128,7 +128,7 @@
     var multiACDiv = document.createElement('div');
     multiACDiv.className = 'auto-complete-div-multi-wrapper';
     multiACDiv.appendChild(ngRepeatDiv);
-    
+
     return multiACDiv;
   };
 
@@ -164,7 +164,7 @@
 
   var showLoading = function(ulEl, show) {
     if (show) {
-      ulEl.innerHTML = '<li class="loading"> Loading </li>'; 
+      ulEl.innerHTML = '<li class="loading"> Loading </li>';
     } else {
       ulEl.querySelector('li.loading') &&
         ulEl.querySelector('li.loading').remove();
@@ -172,8 +172,7 @@
   };
 
   var addListElements = function(scope, data) {
-    var inputEl = scope.inputEl, ulEl = scope.ulEl;
-    var displayText;
+    var ulEl = scope.ulEl;
     var getLiEl = function(modelValue, viewValue, el) {
       var liEl = document.createElement('li');
       liEl.innerHTML = viewValue;
@@ -204,7 +203,7 @@
 
   var loadList = function(scope) {
     var inputEl = scope.inputEl, ulEl = scope.ulEl;
-    while(ulEl.firstChild) { 
+    while(ulEl.firstChild) {
       ulEl.removeChild(ulEl.firstChild);
     }
     if (scope.source.constructor.name == 'Array') { // local source
@@ -234,7 +233,7 @@
   };
 
   var focusInputEl = function(scope) {
-    scope.ulEl.style.display = 'block'; 
+    scope.ulEl.style.display = 'block';
     scope.inputEl.focus();
     scope.inputEl.value = '';
     loadList(scope);
@@ -245,7 +244,7 @@
     switch(keyCode) {
       case 27: // ESC
         selected.className = '';
-        hideAutoselect(scope); 
+        hideAutoselect(scope);
         break;
       case 38: // UP
         if (selected.previousSibling) {
@@ -362,6 +361,9 @@
       $timeout(function() {
         if (attrs.ngModel) {
           if (scope.multiple) {
+            if (!scope.ngModel) {
+              scope.ngModel = [];
+            }
             scope.ngModel.push(liEl.model);
           } else if (controlEl) {
             if (controlEl.tagName == 'INPUT') {
@@ -369,7 +371,7 @@
             } else if (controlEl.tagName == 'SELECT') {
               scope.ngModel = liEl.modelValue;
               placeholderEl.innerHTML = liEl.viewValue;
-            } 
+            }
           } else {
             scope.ngModel = liEl.modelValue;
           }
@@ -379,13 +381,13 @@
       });
     };
 
-    inputEl.addEventListener('focus', function(evt) {
+    inputEl.addEventListener('focus', function() {
       if (controlEl) {
         !controlEl.disabled && focusInputEl(scope);
       } else {
         focusInputEl(scope);
       }
-    }); 
+    });
 
     inputEl.addEventListener('blur', function() {
       hideAutoselect(scope);
@@ -395,7 +397,7 @@
       inputElKeyHandler(scope, evt.keyCode);
     });
 
-    ulEl.addEventListener('mousedown', function(evt) { 
+    ulEl.addEventListener('mousedown', function(evt) {
       evt.target.tagName == 'LI' && scope.select(evt.target);
     });
 
@@ -422,19 +424,19 @@
       return {
         restrict: 'E',
         scope: {
-          ngModel: '=', 
-          source: '=', 
-          minChars: '=', 
+          ngModel: '=',
+          source: '=',
+          minChars: '=',
           multiple: '=',
-          defaultStyle: '=', 
-          pathToData: '@', 
+          defaultStyle: '=',
+          pathToData: '@',
           valueProperty: '@',
           displayProperty: '@',
           placeholder: '@',
           initialSelectText: '@',
           valueChanged: '&'
         },
-        link: linkFunc 
+        link: linkFunc
       };
     };
   autoCompleteDiv.$inject = ['$timeout', '$filter', 'AutoComplete'];

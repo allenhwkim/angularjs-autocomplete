@@ -26,7 +26,7 @@
     inputEl.setAttribute('placeholder', attrs.placeholder);
     inputEl.setAttribute('size', attrs.placeholder.length);
 
-    attrs.ngDisabled && 
+    attrs.ngDisabled &&
       inputEl.setAttribute('ng-disabled', attrs.ngDisabled);
     acDiv.appendChild(inputEl);
 
@@ -39,7 +39,7 @@
         acDiv.setAttribute(dasherize(acAttr), attrValue);
       }
     });
-    acDiv.style.position = 'absolute';
+    acDiv.style.position = 'relative';
     //acDiv.style.display = 'none';
     return acDiv;
   };
@@ -52,7 +52,7 @@
 
     var ngRepeatDiv = document.createElement('span');
     ngRepeatDiv.className += ' auto-complete-repeat';
-    ngRepeatDiv.setAttribute('ng-repeat', 
+    ngRepeatDiv.setAttribute('ng-repeat',
       'obj in '+attrs.ngModel+' track by $index');
     ngRepeatDiv.innerHTML = '{{obj["'+attrs.displayProperty+'"] || obj}}';
     ngRepeatDiv.appendChild(deleteLink);
@@ -60,7 +60,7 @@
     var multiACDiv = document.createElement('div');
     multiACDiv.className = 'auto-complete-div-multi-wrapper';
     multiACDiv.appendChild(ngRepeatDiv);
-    
+
     return multiACDiv;
   };
 
