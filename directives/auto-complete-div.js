@@ -13,7 +13,9 @@
 
   var addListElements = function(scope, data) {
     var ulEl = scope.ulEl;
-    var getLiEl = function(modelValue, viewValue, el) {
+    var getLiEl = function(el) {
+      var viewValue = typeof el == 'object' ? el[scope.displayProperty] : el;
+      var modelValue = typeof el == 'object' ? el[scope.valueProperty] : el;
       var liEl = document.createElement('li');
       liEl.innerHTML = viewValue;
       liEl.model = el;
@@ -27,9 +29,11 @@
       ulEl.appendChild(getLiEl(undefined, scope.placeholder));
     }
     data.forEach(function(el) {
-      var viewValue = typeof el == 'object' ? el[scope.displayProperty] : el;
-      var modelValue = typeof el == 'object' ? el[scope.valueProperty] : el;
-      ulEl.appendChild(getLiEl(modelValue, viewValue, el));
+      if (scope.customLiElFunc) {
+        ulEl.appendChild(scope.customLiElFunc(el));
+      } else {
+        ulEl.appendChild(getLiEl(el));
+      }
     });
   };
 
@@ -269,6 +273,7 @@
           minChars: '=',
           multiple: '=',
           defaultStyle: '=',
+          customLiElFunc: '=',
           pathToData: '@',
           valueProperty: '@',
           displayProperty: '@',

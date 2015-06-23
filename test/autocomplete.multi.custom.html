@@ -16,15 +16,21 @@
       console.log('value selected by autocomplete: ', arg);
     };
     $scope.foo5 = [{"key":4,"text":"Autocomplete"}];
+    $scope.buildLiEl = function(data) {
+      var liEl = angular.element('<li><b>('+data.key+')&nbsp;</b>'+data.text+'</li>')[0];
+      liEl.model = data, liEl.modelValue = data.key, liEl.viewValue = data.text;
+      liEl.className = 'key'+data.key;
+      return liEl;
+    };
   });
   </script>
   <style id="custom-css">
   div {
     box-sizing: border-box
   }
-  #sh2 { 
+  #sh2 {
     display: inline-block;
-    background-color: lightblue; 
+    background-color: lightblue;
     border-radius: 10px;
     padding: 10px;
     width: 500px;
@@ -45,18 +51,18 @@
     color: red;
     text-decoration: none;
   }
-  auto-complete-div {  
+  auto-complete-div {
     position: relative;
     display: inline-block;
   }
-  auto-complete-div input {  
+  auto-complete-div input {
     outline: none;
     background-color: transparent;
     border: 0;
     padding: 0;
     margin: 2px 0 0 3px;
   }
-  auto-complete-div ul {  
+  auto-complete-div ul {
     background-color: yellow;
     border: 1px solid #ccc;
     box-shadow: 3px 3px 3px #ccc;
@@ -73,7 +79,7 @@
     top: 1.5em;
     width: auto;
   }
-  auto-complete-div ul li {  
+  auto-complete-div ul li {
     padding: 2px 5px;
     border-bottom: 1px solid #ccc;
   }
@@ -81,19 +87,33 @@
   auto-complete-div ul li.selected {
     background-color: #ccc;
   }
+
+  auto-complete-div ul li.key1 {
+    background-color: red;
+  }
+  auto-complete-div ul li.key2 {
+    background-color: green; color: #fff;
+  }
+  auto-complete-div ul li.key3 {
+    background-color: blue;
+  }
+  auto-complete-div ul li.key3 {
+    background-color: darkblue;  color: #fff;
+  }
+
   #sh2 span.key1 { background-color: red; }
   #sh2 span.key2 { background-color: green; }
   #sh2 span.key3 { background-color: blue; }
   #sh2 span.key4 { background-color: darkblue; }
 
   </style>
-</head> 
+</head>
 <body ng-app="myApp" ng-controller="MyCtrl">
 
 <h3>
   Custom-Styled multiple autocomplete without INPUT/SELECT tag
 </h3>
-  
+
 <br/>ng-model foo5: <b>{{ foo5 }}</b>
 <br/>source: {{ source3 }} <br/>
 <br/>
@@ -104,13 +124,14 @@
     {{'('+obj.key+') '+obj.text}})
     <a href="" ng-click="foo5.splice($index, 1)">x</a>
   </span>
-  <auto-complete-div 
+  <auto-complete-div
     multiple="true"
+    custom-li-el-func="buildLiEl"
     default-style="false"
-    ng-model="foo5" 
-    source="source3" 
-    value-changed="callback(value)" 
-    value-property="key" 
+    ng-model="foo5"
+    source="source3"
+    value-changed="callback(value)"
+    value-property="key"
     display-property="text">
     <input size="10" placeholder="Select One" />
     <ul></ul>
@@ -124,13 +145,13 @@
       {{'('+obj.key+') '+obj.text}})
       &lt;a href="" ng-click="foo5.splice($index, 1)">x</a>
     &lt;/span>
-    &lt;auto-complete-div 
+    &lt;auto-complete-div
       multiple
       <b>default-style="false"</b>
-      ng-model="foo5" 
-      source="source3" 
-      value-changed="callback(value)" 
-      value-property="key" 
+      ng-model="foo5"
+      source="source3"
+      value-changed="callback(value)"
+      value-property="key"
       display-property="text">
       &lt;input size="2" />
       &lt;ul></ul>
