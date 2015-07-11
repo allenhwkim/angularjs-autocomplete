@@ -2,13 +2,14 @@
 <html><head>
   <title>test</title>
   <script src="lib/angular.js"></script>
-  <script src="../build/angularjs-autocomplete.min.js"></script>
+  <script src="lib/angular-sanitize.js"></script>
   <!--
+  <script src="../build/angularjs-autocomplete.min.js"></script>
+  -->
   <script src="../directives/auto-complete.js"></script>
   <script src="../directives/auto-complete-multi.js"></script>
   <script src="../directives/auto-complete-div.js"></script>
   <script src="../services/auto-complete.js"></script>
-  -->
   <script id="javascript">
   angular.module('myApp', ['angularjs-autocomplete']).controller('MyCtrl', function($scope) {
     $scope.source3 = [{key:1, text:'One'}, {key:2, text:'Two'}, {key:3, text:'Three'}, {key:4, text:'Four'}];
@@ -16,12 +17,6 @@
       console.log('value selected by autocomplete: ', arg);
     };
     $scope.foo5 = [{"key":4,"text":"Autocomplete"}];
-    $scope.buildLiEl = function(data) {
-      var liEl = angular.element('<li><b>('+data.key+')&nbsp;</b>'+data.text+'</li>')[0];
-      liEl.model = data, liEl.modelValue = data.key, liEl.viewValue = data.text;
-      liEl.className = 'key'+data.key;
-      return liEl;
-    };
   });
   </script>
   <style id="custom-css">
@@ -126,7 +121,6 @@
   </span>
   <auto-complete-div
     multiple="true"
-    custom-li-el-func="buildLiEl"
     default-style="false"
     ng-model="foo5"
     source="source3"

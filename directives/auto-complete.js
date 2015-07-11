@@ -11,7 +11,7 @@
 
   // accepted attributes
   var autoCompleteAttrs = [
-    'placeholder', 'initSelectText',
+    'placeholder', 'listFormatter', 'prefillFunc',
     'ngModel', 'valueChanged', 'source', 'pathToData', 'minChars',
     'defaultStyle', 'valueProperty', 'displayProperty'
   ];
@@ -57,7 +57,7 @@
     element[0].appendChild(acDiv);
   }; // compileFunc
 
-  angular.module('angularjs-autocomplete',[]);
+  angular.module('angularjs-autocomplete',['ngSanitize']);
   angular.module('angularjs-autocomplete').
     directive('autoComplete', function() {
       return {

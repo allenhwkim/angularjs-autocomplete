@@ -3,24 +3,34 @@
   <head>
     <title>test</title>
     <script src="lib/angular.js"></script>
-  <script src="../build/angularjs-autocomplete.min.js"></script>
+    <script src="lib/angular-sanitize.js"></script>
   <!--
+  <script src="../build/angularjs-autocomplete.min.js"></script>
+  -->
     <script src="../directives/auto-complete.js"></script>
     <script src="../directives/auto-complete-multi.js"></script>
     <script src="../directives/auto-complete-div.js"></script>
     <script src="../services/auto-complete.js"></script>
-  -->
     <script>
-      angular.module('myApp', ['angularjs-autocomplete']).controller('MyCtrl', function($scope) {
+      angular.module('myApp', ['angularjs-autocomplete', 'ngSanitize']).controller('MyCtrl', function($scope, $http) {
         $scope.source1 = ["this", "is", "array", "of", "text"]; 
         $scope.source2 = [{id:1, value:'One'}, {id:2, value:'Two'}, {id:3, value:'Three'}, {id:4, value:'Four'}];
         $scope.callback = function(selected) {
-          $scope.foo_ids = $scope.foo.map(function(el) {return el.id || el;});
+          $scope.foo_ids = $scope.foo.map(function(el) {return el.id || el;}).join(',');
           $scope.selected = selected;
         };
         $scope.foo = ["is"];
-        $scope.source = $scope.source1;
+        $scope.foo_ids = '1,2';
+        $scope.source = $scope.source2;
         $scope.disabled = false;
+        $scope.customListFormatter = function(data) {
+          return '<b>('+data.id+')</b><i>'+data.value+'</i>';
+        };
+        $scope.prefillFunc = function(url) {
+          $http.get(url).success(function(data) {
+            $scope.foo = data;
+          });
+        }
       });
       var printHTML = function(selector) {
         document.write('<pre>'+
@@ -47,6 +57,8 @@
     <div ng-if="addRemove">
       <div auto-complete-multi 
         placeholder="Select One"
+        xxxx-list-formatter="customListFormatter"
+        prefill-func="prefillFunc('prefill2.json?ids='+foo_ids)"
         source="source" 
         value-changed="callback(value)"> 
         <select id='sp' ng-disabled="disabled" ng-model="foo"></select>

@@ -7,5 +7,9 @@
   "description": "Single or Multi Autocomplete for INPUT and SELECT tag",
   "keywords": ["select", "input", "select2", "autocomplete", "remote"],
   "ignore" : ["directives","gulpfile.js", "node_modules", "services", "test"],
+  "devDependencies": {
+    "angular": "~1.3.14",
+    "angular-sanitize": "~1.3.14"
+  }
   "license": "MIT"
 }

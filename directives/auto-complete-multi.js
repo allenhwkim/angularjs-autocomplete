@@ -12,7 +12,7 @@
 
   // accepted attributes
   var autoCompleteAttrs = [
-    'placeholder', 'multiple',
+    'placeholder', 'multiple', 'listFormatter', 'prefillFunc',
     'ngModel', 'valueChanged', 'source', 'pathToData', 'minChars',
     'defaultStyle', 'valueProperty', 'displayProperty'
   ];
@@ -52,9 +52,13 @@
 
     var ngRepeatDiv = document.createElement('span');
     ngRepeatDiv.className += ' auto-complete-repeat';
-    ngRepeatDiv.setAttribute('ng-repeat',
-      'obj in '+attrs.ngModel+' track by $index');
-    ngRepeatDiv.innerHTML = '{{obj["'+attrs.displayProperty+'"] || obj}}';
+    ngRepeatDiv.setAttribute('ng-repeat', 'obj in '+attrs.ngModel+' track by $index');
+    if (attrs.listFormatter) {
+      ngRepeatDiv.innerHTML = '<span ng-bind-html="listFormatter(obj)"></span>';
+    } else {
+      ngRepeatDiv.innerHTML = '<b>(obj.'+attrs.valueProperty+')</b>'+
+        '<span>obj.'+attrs.displayProperty+'</span>';
+    }
     ngRepeatDiv.appendChild(deleteLink);
 
     var multiACDiv = document.createElement('div');
