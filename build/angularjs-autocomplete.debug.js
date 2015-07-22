@@ -11,7 +11,7 @@
 
   // accepted attributes
   var autoCompleteAttrs = [
-    'placeholder', 'initSelectText',
+    'placeholder', 'listFormatter', 'prefillFunc',
     'ngModel', 'valueChanged', 'source', 'pathToData', 'minChars',
     'defaultStyle', 'valueProperty', 'displayProperty'
   ];
@@ -57,7 +57,7 @@
     element[0].appendChild(acDiv);
   }; // compileFunc
 
-  angular.module('angularjs-autocomplete',[]);
+  angular.module('angularjs-autocomplete',['ngSanitize']);
   angular.module('angularjs-autocomplete').
     directive('autoComplete', function() {
       return {
@@ -80,7 +80,7 @@
 
   // accepted attributes
   var autoCompleteAttrs = [
-    'placeholder', 'multiple',
+    'placeholder', 'multiple', 'listFormatter', 'prefillFunc',
     'ngModel', 'valueChanged', 'source', 'pathToData', 'minChars',
     'defaultStyle', 'valueProperty', 'displayProperty'
   ];
@@ -120,9 +120,13 @@
 
     var ngRepeatDiv = document.createElement('span');
     ngRepeatDiv.className += ' auto-complete-repeat';
-    ngRepeatDiv.setAttribute('ng-repeat',
-      'obj in '+attrs.ngModel+' track by $index');
-    ngRepeatDiv.innerHTML = '{{obj["'+attrs.displayProperty+'"] || obj}}';
+    ngRepeatDiv.setAttribute('ng-repeat', 'obj in '+attrs.ngModel+' track by $index');
+    if (attrs.listFormatter) {
+      ngRepeatDiv.innerHTML = '<span ng-bind-html="listFormatter(obj)"></span>';
+    } else {
+      ngRepeatDiv.innerHTML = '<b>({{obj.'+attrs.valueProperty+'}})</b>'+
+        '<span>{{obj.'+attrs.displayProperty+'}}</span>';
+    }
     ngRepeatDiv.appendChild(deleteLink);
 
     var multiACDiv = document.createElement('div');
@@ -171,13 +175,24 @@
     }
   };
 
+  var defaultListFormatter = function(obj, scope) {
+    return '<b>('+obj[scope.valueProperty]+')</b>' + 
+      '<span>'+obj[scope.displayProperty]+'</span>';
+  };
+
   var addListElements = function(scope, data) {
     var ulEl = scope.ulEl;
     var getLiEl = function(el) {
       var viewValue = typeof el == 'object' ? el[scope.displayProperty] : el;
       var modelValue = typeof el == 'object' ? el[scope.valueProperty] : el;
       var liEl = document.createElement('li');
-      liEl.innerHTML = viewValue;
+      if (scope.listFormatter && typeof el == 'object') {
+        liEl.innerHTML = scope.listFormatter(el);
+      } else if (typeof el == 'object') {
+        liEl.innerHTML = defaultListFormatter(el, scope);
+      } else {
+        liEl.innerHTML = viewValue;
+      }
       liEl.model = el;
       liEl.modelValue = modelValue;
       liEl.viewValue = viewValue;
@@ -186,14 +201,10 @@
     if (scope.placeholder &&
         !scope.multiple &&
         scope.controlEl.tagName == 'SELECT') {
-      ulEl.appendChild(getLiEl(undefined, scope.placeholder));
+      ulEl.appendChild(getLiEl(scope.placeholder));
     }
     data.forEach(function(el) {
-      if (scope.customLiElFunc) {
-        ulEl.appendChild(scope.customLiElFunc(el));
-      } else {
-        ulEl.appendChild(getLiEl(el));
-      }
+      ulEl.appendChild(getLiEl(el));
     });
   };
 
@@ -277,7 +288,7 @@
         }
     }
   };
-
+  
   var linkFunc = function(scope, element, attrs) {
     var inputEl, ulEl, containerEl;
 
@@ -303,26 +314,25 @@
         var controlBCR = controlEl.getBoundingClientRect();
         placeholderEl.style.lineHeight = controlBCR.height + 'px';
 
+        if (scope.prefillFunc) {
+          scope.prefillFunc().then(function(html) {
+            placeholderEl.innerHTML = html;
+          });
+        } 
+
         if (attrs.ngModel) {
           scope.$parent.$watch(attrs.ngModel, function(val) {
             !val && (placeholderEl.innerHTML = attrs.placeholder);
           });
 
-          if (scope.ngModel) {
-            attrs.$observe('initSelectText', function(val) {
-              val && (placeholderEl.innerHTML = val);
-            });
-          }
         }
 
         controlEl.addEventListener('mouseover', function() {
-          console.log('mouseover');
           for (var i=0; i<controlEl.children.length; i++) {
             controlEl.children[i].style.display = 'none';
           }
         });
         controlEl.addEventListener('mouseout', function() {
-          console.log('mouseout');
           for (var i=0; i<controlEl.children.length; i++) {
             controlEl.children[i].style.display = '';
           }
@@ -342,6 +352,9 @@
       });
 
     } else if (scope.multiple) {
+
+      scope.prefillFunc && scope.prefillFunc();
+
       parentEl.addEventListener('click', function() {
         if (controlEl) {
           inputEl.disabled = controlEl.disabled;
@@ -374,7 +387,12 @@
               scope.ngModel = liEl.innerHTML ;
             } else if (controlEl.tagName == 'SELECT') {
               scope.ngModel = liEl.modelValue;
-              placeholderEl.innerHTML = liEl.viewValue;
+
+              if (scope.listFormatter && typeof liEl.model == 'object') {
+                placeholderEl.innerHTML = scope.listFormatter(liEl.model);
+              } else {
+                placeholderEl.innerHTML = liEl.viewValue;
+              }
             }
           } else {
             scope.ngModel = liEl.modelValue;
@@ -402,7 +420,13 @@
     });
 
     ulEl.addEventListener('mousedown', function(evt) {
-      evt.target.tagName == 'LI' && scope.select(evt.target);
+      if (evt.target !== ulEl) {
+        var liTag = evt.target;
+        while(liTag.tagName !== 'LI') {
+          liTag = liTag.parentElement;
+        }
+        liTag.tagName == 'LI' && scope.select(liTag);
+      }
     });
 
     /** when enters text to search, reload the list */
@@ -433,12 +457,12 @@
           minChars: '=',
           multiple: '=',
           defaultStyle: '=',
-          customLiElFunc: '=',
+          listFormatter: '=',
           pathToData: '@',
           valueProperty: '@',
           displayProperty: '@',
           placeholder: '@',
-          initialSelectText: '@',
+          prefillFunc: '&',
           valueChanged: '&'
         },
         link: linkFunc
