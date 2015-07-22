@@ -56,8 +56,8 @@
     if (attrs.listFormatter) {
       ngRepeatDiv.innerHTML = '<span ng-bind-html="listFormatter(obj)"></span>';
     } else {
-      ngRepeatDiv.innerHTML = '<b>(obj.'+attrs.valueProperty+')</b>'+
-        '<span>obj.'+attrs.displayProperty+'</span>';
+      ngRepeatDiv.innerHTML = '<b>({{obj.'+attrs.valueProperty+'}})</b>'+
+        '<span>{{obj.'+attrs.displayProperty+'}}</span>';
     }
     ngRepeatDiv.appendChild(deleteLink);
 
