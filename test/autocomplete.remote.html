@@ -2,7 +2,8 @@
 <html>
 <head>
   <title>test</title>
-  <script src="https://code.angularjs.org/1.3.15/angular.js"></script>
+  <script src="lib/angular.js"></script>
+  <script src="lib/angular-sanitize.js"></script>
   <script src="https://code.angularjs.org/1.3.15/angular-resource.js"></script>
   <script src="../build/angularjs-autocomplete.min.js"></script>
   <!--
@@ -14,7 +15,7 @@
   <script>
   angular.module('myApp', ['ngResource', 'angularjs-autocomplete']).controller('MyCtrl', function($scope, $http, $resource) {
     $scope.source1 = "https://maps.googleapis.com/maps/api/geocode/json?address=:keyword";
-    $scope.source2 = function(param) { 
+    $scope.source2 = function(param) {
       return $http.get("https://maps.googleapis.com/maps/api/geocode/json?address="+param.keyword);
     };
     $scope.source3 = $resource("https://maps.googleapis.com/maps/api/geocode/json?address=:keyword", {keyword:'@keyword'}).get;
@@ -36,7 +37,7 @@
 </head>
 
 <body ng-app="myApp" ng-controller="MyCtrl">
-  
+
   <h1>AutoComplete With Google Geocode</h1>
 
   Please pick your type of source that represents Google geocode url:
@@ -44,7 +45,7 @@
     <li><input type="radio" ng-model="source" ng-value="source1"> URL string<br/>
       <pre>{{source1}}</pre>
     <li><input type="radio" ng-model="source" ng-value="source2"> function<br/>
-      <pre>function(param) { 
+      <pre>function(param) {
   return $http.get("http://maps.googleapis.com/maps/api/geocode/json?address="+param.keyword);
 }</pre>
     <li><input type="radio" ng-model="source" ng-value="source3"> $resource <br/>
@@ -53,8 +54,8 @@
 
   </ul>
 
-  <div auto-complete  
-    source="source" 
+  <div auto-complete
+    source="source"
     path-to-data="results"
     display-property="formatted_address"
     min-chars="2"
@@ -65,7 +66,7 @@
   <script>printHTML("div[auto-complete]")</script>
 
   <br/>
-  <br/>$scope.addressText: <b>{{addressText}}</b> 
+  <br/>$scope.addressText: <b>{{addressText}}</b>
   <br/>$scope.address :<pre>{{address|json}}</pre>
 </body>
 </html>

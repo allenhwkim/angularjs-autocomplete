@@ -12,7 +12,7 @@
   };
 
   var defaultListFormatter = function(obj, scope) {
-    return '<b>('+obj[scope.valueProperty]+')</b>' + 
+    return '<b>('+obj[scope.valueProperty]+')</b>' +
       '<span>'+obj[scope.displayProperty]+'</span>';
   };
 
@@ -124,7 +124,7 @@
         }
     }
   };
-  
+
   var linkFunc = function(scope, element, attrs) {
     var inputEl, ulEl, containerEl;
 
@@ -154,7 +154,7 @@
           scope.prefillFunc().then(function(html) {
             placeholderEl.innerHTML = html;
           });
-        } 
+        }
 
         if (attrs.ngModel) {
           scope.$parent.$watch(attrs.ngModel, function(val) {
@@ -261,7 +261,11 @@
         while(liTag.tagName !== 'LI') {
           liTag = liTag.parentElement;
         }
-        liTag.tagName == 'LI' && scope.select(liTag);
+
+        // Select only if it is a <li></li> and the class is not 'loading'
+        if(liTag.tagName == 'LI' && liTag.className != "loading"){
+          scope.select(liTag);
+        }
       }
     });
 
