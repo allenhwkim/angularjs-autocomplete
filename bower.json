@@ -1,6 +1,6 @@
 {
   "name": "angularjs-autocomplete",
-  "version": "0.4.5",
+  "version": "0.4.6",
   "main": "./build/angularjs-autocomplete.min.js",
   "homepage": "https://github.com/allenhwkim/angularjs-autocomplete",
   "authors": ["Allen Kim <allenhwkim@gmail.com>"],
@@ -8,8 +8,8 @@
   "keywords": ["select", "input", "select2", "autocomplete", "remote"],
   "ignore" : ["directives","gulpfile.js", "node_modules", "services", "test"],
   "devDependencies": {
-    "angular": "~1.3.14",
-    "angular-sanitize": "~1.3.14"
+    "angular": "~1.4.4",
+    "angular-sanitize": "~1.4.4"
   },
   "license": "MIT"
 }
