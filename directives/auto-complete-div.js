@@ -114,6 +114,7 @@
         break;
       case 13: // ENTER
         selected && scope.select(selected);
+        evt.preventDefault();
         break;
       case 8: // BACKSPACE
         // remove the last element for multiple and empty input
