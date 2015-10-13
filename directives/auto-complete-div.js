@@ -90,9 +90,9 @@
     loadList(scope);
   };
 
-  var inputElKeyHandler = function(scope, keyCode) {
+  var inputElKeyHandler = function(scope, evt) {
     var selected = scope.ulEl.querySelector('.selected');
-    switch(keyCode) {
+    switch(evt.keyCode) {
       case 27: // ESC
         selected.className = '';
         hideAutoselect(scope);
@@ -253,7 +253,7 @@
     }); // hide list
 
     inputEl.addEventListener('keydown', function(evt) {
-      inputElKeyHandler(scope, evt.keyCode);
+      inputElKeyHandler(scope, evt);
     });
 
     ulEl.addEventListener('mousedown', function(evt) {

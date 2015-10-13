@@ -1,6 +1,6 @@
 {
   "name": "angularjs-autocomplete",
-  "version": "0.4.7",
+  "version": "0.4.8",
   "main": "./build/angularjs-autocomplete.min.js",
   "homepage": "https://github.com/allenhwkim/angularjs-autocomplete",
   "authors": ["Allen Kim <allenhwkim@gmail.com>"],
