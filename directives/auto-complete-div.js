@@ -280,7 +280,12 @@
       }, delayMs);
 
       if (scope.multiple) {
-        inputEl.setAttribute('size', inputEl.value.length+1);
+        var placeholderLength = 0;
+        if (attrs.placeholder) {
+          placeholderLength = attrs.placeholder.length;
+        }
+        var newSize = Math.max(placeholderLength, inputEl.value.length+1);
+        inputEl.setAttribute('size', newSize);
       }
     });
 
