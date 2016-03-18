@@ -230,8 +230,10 @@
       if (inputEl.value.length >= (scope.minChars||0)) {
         ulEl.style.display = 'block';
         showLoading(ulEl, true);
+        var query = {keyword: inputEl.value};
+        if (scope.ngModel) query.ngModel = scope.ngModel;
         AutoComplete.getRemoteData(
-          scope.source, {keyword: inputEl.value}, scope.pathToData).then(
+          scope.source, query, scope.pathToData).then(
           function(data) {
             showLoading(ulEl, false);
             addListElements(scope, data);
