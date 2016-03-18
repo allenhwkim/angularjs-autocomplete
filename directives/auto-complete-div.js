@@ -6,8 +6,8 @@
     if (show) {
       ulEl.innerHTML = '<li class="loading"> Loading </li>';
     } else {
-      ulEl.querySelector('li.loading') &&
-        ulEl.querySelector('li.loading').remove();
+      var loadingNode = ulEl.querySelector('li.loading');
+      if (loadingNode) { ulEl.removeChild(loadingNode); }
     }
   };
 
