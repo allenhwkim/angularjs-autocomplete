@@ -170,8 +170,8 @@
     if (show) {
       ulEl.innerHTML = '<li class="loading"> Loading </li>';
     } else {
-      ulEl.querySelector('li.loading') &&
-        ulEl.querySelector('li.loading').remove();
+      var loadingNode = ulEl.querySelector('li.loading');
+      if (loadingNode) { ulEl.removeChild(loadingNode); }
     }
   };
 
@@ -444,7 +444,12 @@
       }, delayMs);
 
       if (scope.multiple) {
-        inputEl.setAttribute('size', inputEl.value.length+1);
+        var placeholderLength = 0;
+        if (attrs.placeholder) {
+          placeholderLength = attrs.placeholder.length;
+        }
+        var newSize = Math.max(placeholderLength, inputEl.value.length+1);
+        inputEl.setAttribute('size', newSize);
       }
     });
 
