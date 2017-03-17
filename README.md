@@ -2,7 +2,9 @@ AngularJS Autocomplete
 ======================
 autocomplete for INPUT and SELECT tag for single/multi, local/remote
 
-
+NOTICE
+------
+This repository is not maintained well at this moment. Please use at your own risk or become the admin of this module if you want to.
 
 Features
 --------
